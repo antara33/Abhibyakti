@@ -53,7 +53,7 @@ int main() {
             << "Lexeme: " << token.lexeme
             << " | Line: " << token.line
             << " | Token Type: "
-            << static_cast<int>(token.type)
+            << tokenTypeToString(token.type)
             << std::endl;
     }
 
