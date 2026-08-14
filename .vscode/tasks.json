@@ -8,6 +8,7 @@
             "args": [
                 "${workspaceFolder}\\main.cpp",
                 "${workspaceFolder}\\src\\lexer.cpp",
+                "${workspaceFolder}\\src\\token.cpp",
                 "-o",
                 "${workspaceFolder}\\main.exe"
             ],

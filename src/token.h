@@ -91,4 +91,6 @@ struct Token {
         : type(type), lexeme(lexeme), line(line) {}
 };
 
+std::string tokenTypeToString(BhashaTokenType type);
+
 #endif
