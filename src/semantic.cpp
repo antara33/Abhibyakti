@@ -1,10 +1,10 @@
 #include "semantic.h"
 
 #include <iostream>
-#include <sstream>
 
 // ============================================================
-// HELPER FUNCTIONS
+// HELPER FUNCTION
+// Convert data type to readable text
 // ============================================================
 
 static std::string dataTypeToString(BhashaDataType type)
@@ -64,30 +64,27 @@ static bool areTypesCompatible(
     BhashaDataType expected,
     BhashaDataType actual)
 {
-    // Exact same type
+    // Same type
     if (expected == actual)
     {
         return true;
     }
 
-    // NUMBER can be assigned to DECIMAL
+    // NUMBER -> DECIMAL
     if (expected == BhashaDataType::DECIMAL &&
         actual == BhashaDataType::NUMBER)
     {
         return true;
     }
 
-    // NUMBER can be assigned to LONG
+    // NUMBER -> LONG
     if (expected == BhashaDataType::LONG &&
         actual == BhashaDataType::NUMBER)
     {
         return true;
     }
 
-    // Numeric values can be assigned to POSITIVE.
-    // The actual positive-value check is intentionally
-    // kept simple because LiteralExpression stores values
-    // as strings.
+    // Numeric -> POSITIVE
     if (expected == BhashaDataType::POSITIVE &&
         isNumericType(actual))
     {
@@ -98,17 +95,11 @@ static bool areTypesCompatible(
 }
 
 // ============================================================
-// CONSTRUCTOR
-// ============================================================
-// Constructor is defaulted in semantic.h.
-// No separate implementation is required.
-
-// ============================================================
 // ADD ERROR
 // ============================================================
 
 void SemanticAnalyzer::addError(
-    const std::string &message)
+    const std::string& message)
 {
     errors.push_back(message);
 }
@@ -118,9 +109,9 @@ void SemanticAnalyzer::addError(
 // ============================================================
 
 void SemanticAnalyzer::analyze(
-    const std::shared_ptr<Program> &program)
+    const std::shared_ptr<Program>& program)
 {
-    // Clear previous analysis results
+    // Clear previous results
     symbolTable.clear();
     errors.clear();
 
@@ -130,7 +121,7 @@ void SemanticAnalyzer::analyze(
         return;
     }
 
-    for (const auto &statement :
+    for (const auto& statement :
          program->statements)
     {
         analyzeStatement(statement);
@@ -142,7 +133,7 @@ void SemanticAnalyzer::analyze(
 // ============================================================
 
 void SemanticAnalyzer::analyzeStatement(
-    const std::shared_ptr<Statement> &statement)
+    const std::shared_ptr<Statement>& statement)
 {
     if (!statement)
     {
@@ -159,10 +150,10 @@ void SemanticAnalyzer::analyzeStatement(
 
     if (declaration)
     {
-        const std::string &name =
+        const std::string& name =
             declaration->variableName;
 
-        // Check duplicate declaration
+        // Duplicate declaration
         if (symbolTable.find(name) != symbolTable.end())
         {
             addError(
@@ -170,7 +161,6 @@ void SemanticAnalyzer::analyzeStatement(
                 name +
                 "' is already declared.");
 
-            // Still analyze initializer
             if (declaration->initializer)
             {
                 analyzeExpression(
@@ -203,7 +193,7 @@ void SemanticAnalyzer::analyzeStatement(
                 ".");
         }
 
-        // Add variable to symbol table
+        // Add to symbol table
         symbolTable[name] =
             declaration->dataType;
 
@@ -220,13 +210,13 @@ void SemanticAnalyzer::analyzeStatement(
 
     if (assignment)
     {
-        const std::string &name =
+        const std::string& name =
             assignment->variableName;
 
-        // Check variable exists
         auto it =
             symbolTable.find(name);
 
+        // Variable does not exist
         if (it == symbolTable.end())
         {
             addError(
@@ -234,14 +224,13 @@ void SemanticAnalyzer::analyzeStatement(
                 name +
                 "' is not declared.");
 
-            // Still analyze RHS
             analyzeExpression(
                 assignment->value);
 
             return;
         }
 
-        // Analyze assigned value
+        // Analyze RHS
         BhashaDataType valueType =
             analyzeExpression(
                 assignment->value);
@@ -319,14 +308,14 @@ void SemanticAnalyzer::analyzeStatement(
                 ".");
         }
 
-        // Analyze THEN block
+        // THEN block
         if (ifStatement->thenBranch)
         {
             analyzeBlock(
                 ifStatement->thenBranch);
         }
 
-        // Analyze ELSE block
+        // ELSE block
         if (ifStatement->elseBranch)
         {
             analyzeBlock(
@@ -360,7 +349,7 @@ void SemanticAnalyzer::analyzeStatement(
                 ".");
         }
 
-        // Analyze WHILE body
+        // WHILE body
         if (whileStatement->body)
         {
             analyzeBlock(
@@ -376,14 +365,14 @@ void SemanticAnalyzer::analyzeStatement(
 // ============================================================
 
 void SemanticAnalyzer::analyzeBlock(
-    const std::shared_ptr<BlockStatement> &block)
+    const std::shared_ptr<BlockStatement>& block)
 {
     if (!block)
     {
         return;
     }
 
-    for (const auto &statement :
+    for (const auto& statement :
          block->statements)
     {
         analyzeStatement(statement);
@@ -395,7 +384,7 @@ void SemanticAnalyzer::analyzeBlock(
 // ============================================================
 
 BhashaDataType SemanticAnalyzer::analyzeExpression(
-    const std::shared_ptr<Expression> &expression)
+    const std::shared_ptr<Expression>& expression)
 {
     if (!expression)
     {
@@ -457,7 +446,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         BhashaDataType rightType =
             analyzeExpression(binary->right);
 
-        const std::string &op =
+        const std::string& op =
             binary->operatorSymbol;
 
         // ----------------------------------------------------
@@ -478,7 +467,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                 return BhashaDataType::STRING;
             }
 
-            // Both operands must be numeric
+            // Both must be numeric
             if (!isNumericType(leftType) ||
                 !isNumericType(rightType))
             {
@@ -490,7 +479,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                 return BhashaDataType::UNKNOWN;
             }
 
-            // Modulo with decimal is not allowed
+            // Decimal modulo not allowed
             if (op == "%" &&
                 (leftType == BhashaDataType::DECIMAL ||
                  rightType == BhashaDataType::DECIMAL))
@@ -507,8 +496,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                 return BhashaDataType::DECIMAL;
             }
 
-            // If either operand is decimal,
-            // result is decimal
+            // Decimal result
             if (leftType == BhashaDataType::DECIMAL ||
                 rightType == BhashaDataType::DECIMAL)
             {
@@ -617,13 +605,10 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             analyzeExpression(
                 unary->operand);
 
-        const std::string &op =
+        const std::string& op =
             unary->operatorSymbol;
 
-        // ----------------------------------------------------
         // NOT
-        // ----------------------------------------------------
-
         if (op == "!")
         {
             if (operandType != BhashaDataType::UNKNOWN &&
@@ -638,10 +623,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             return BhashaDataType::BOOLEAN;
         }
 
-        // ----------------------------------------------------
-        // UNARY PLUS / MINUS
-        // ----------------------------------------------------
-
+        // Unary + / -
         if (op == "+" ||
             op == "-")
         {
@@ -658,7 +640,6 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             return operandType;
         }
 
-        // Unknown unary operator
         addError(
             "Unknown unary operator '" +
             op +
@@ -698,8 +679,7 @@ void SemanticAnalyzer::printErrors() const
         << "Semantic Errors:"
         << std::endl;
 
-    for (const auto &error :
-         errors)
+    for (const auto& error : errors)
     {
         std::cout
             << "  - "

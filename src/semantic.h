@@ -2,6 +2,8 @@
 #define SEMANTIC_H
 
 #include "ast.h"
+
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -9,38 +11,60 @@
 class SemanticAnalyzer
 {
 private:
-    // Variable name -> data type
+    // ========================================================
+    // SYMBOL TABLE
+    // Variable name -> Data type
+    // ========================================================
+
     std::unordered_map<std::string, BhashaDataType> symbolTable;
 
-    // Store semantic errors
+    // ========================================================
+    // SEMANTIC ERRORS
+    // ========================================================
+
     std::vector<std::string> errors;
 
-    // Analyze expressions
+    // ========================================================
+    // EXPRESSION ANALYSIS
+    // ========================================================
+
     BhashaDataType analyzeExpression(
-        const std::shared_ptr<Expression> &expression);
+        const std::shared_ptr<Expression>& expression);
 
-    // Analyze statements
+    // ========================================================
+    // STATEMENT ANALYSIS
+    // ========================================================
+
     void analyzeStatement(
-        const std::shared_ptr<Statement> &statement);
+        const std::shared_ptr<Statement>& statement);
 
-    // Analyze blocks
+    // ========================================================
+    // BLOCK ANALYSIS
+    // ========================================================
+
     void analyzeBlock(
-        const std::shared_ptr<BlockStatement> &block);
+        const std::shared_ptr<BlockStatement>& block);
 
-    // Add an error message
-    void addError(const std::string &message);
+    // ========================================================
+    // ERROR HANDLING
+    // ========================================================
+
+    void addError(
+        const std::string& message);
 
 public:
+    // Constructor
     SemanticAnalyzer() = default;
 
     // Analyze complete AST
-    void analyze(const std::shared_ptr<Program> &program);
+    void analyze(
+        const std::shared_ptr<Program>& program);
 
     // Check whether semantic errors exist
     bool hasErrors() const;
 
-    // Print all semantic errors
+    // Print semantic errors
     void printErrors() const;
 };
 
-#endif
+#endif // SEMANTIC_H
