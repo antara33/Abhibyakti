@@ -1,0 +1,344 @@
+#ifndef AST_H
+#define AST_H
+
+#include <memory>
+#include <string>
+#include <vector>
+#include <utility>
+
+// ============================================================
+// BHASHA DATA TYPES
+// ============================================================
+
+enum class BhashaDataType
+{
+    NUMBER,
+    DECIMAL,
+    STRING,
+    CHARACTER,
+    BOOLEAN,
+    LIST,
+    LONG,
+    POSITIVE,
+    VOID,
+    UNKNOWN
+};
+
+// ============================================================
+// BASE AST NODE
+// ============================================================
+
+class ASTNode
+{
+public:
+    virtual ~ASTNode() = default;
+};
+
+// ============================================================
+// EXPRESSION BASE CLASS
+// ============================================================
+
+class Expression : public ASTNode
+{
+public:
+    virtual ~Expression() = default;
+};
+
+// ============================================================
+// STATEMENT BASE CLASS
+// ============================================================
+
+class Statement : public ASTNode
+{
+public:
+    virtual ~Statement() = default;
+};
+
+// ============================================================
+// LITERAL EXPRESSION
+//
+// Examples:
+//     10
+//     3.5
+//     "hello"
+//     'A'
+//     সত্য
+//     মিথ্যা
+// ============================================================
+
+class LiteralExpression : public Expression
+{
+public:
+    std::string value;
+    BhashaDataType dataType;
+
+    LiteralExpression(
+        const std::string &value,
+        BhashaDataType dataType)
+        : value(value),
+          dataType(dataType) {}
+};
+
+// ============================================================
+// VARIABLE EXPRESSION
+//
+// Examples:
+//     x
+//     total
+//     price
+// ============================================================
+
+class VariableExpression : public Expression
+{
+public:
+    std::string name;
+
+    explicit VariableExpression(const std::string &name)
+        : name(name) {}
+};
+
+// ============================================================
+// BINARY EXPRESSION
+//
+// Examples:
+//     x + y
+//     x - y
+//     x * y
+//     x / y
+//     x % y
+//     x > y
+//     x == y
+//     x && y
+//
+// Tree example:
+//
+//          +
+//         / \
+//        x   y
+// ============================================================
+
+class BinaryExpression : public Expression
+{
+public:
+    std::shared_ptr<Expression> left;
+    std::string operatorSymbol;
+    std::shared_ptr<Expression> right;
+
+    BinaryExpression(
+        std::shared_ptr<Expression> left,
+        const std::string &operatorSymbol,
+        std::shared_ptr<Expression> right)
+        : left(std::move(left)),
+          operatorSymbol(operatorSymbol),
+          right(std::move(right)) {}
+};
+
+// ============================================================
+// UNARY EXPRESSION
+//
+// Examples:
+//     -x
+//     +x
+//     !x
+//
+// Tree:
+//
+//        !
+//        |
+//        x
+// ============================================================
+
+class UnaryExpression : public Expression
+{
+public:
+    std::string operatorSymbol;
+    std::shared_ptr<Expression> operand;
+
+    UnaryExpression(
+        const std::string &operatorSymbol,
+        std::shared_ptr<Expression> operand)
+        : operatorSymbol(operatorSymbol),
+          operand(std::move(operand)) {}
+};
+
+// ============================================================
+// VARIABLE DECLARATION
+//
+// Examples:
+//
+//     সংখ্যা x = 10;
+//     দশমিক price = 25.5;
+//
+// ============================================================
+
+class DeclarationStatement : public Statement
+{
+public:
+    BhashaDataType dataType;
+    std::string variableName;
+    std::shared_ptr<Expression> initializer;
+
+    DeclarationStatement(
+        BhashaDataType dataType,
+        const std::string &variableName,
+        std::shared_ptr<Expression> initializer)
+        : dataType(dataType),
+          variableName(variableName),
+          initializer(std::move(initializer)) {}
+};
+
+// ============================================================
+// ASSIGNMENT STATEMENT
+//
+// Examples:
+//
+//     x = 20;
+//     x = x + 5;
+//
+// ============================================================
+
+class AssignmentStatement : public Statement
+{
+public:
+    std::string variableName;
+    std::shared_ptr<Expression> value;
+
+    AssignmentStatement(
+        const std::string &variableName,
+        std::shared_ptr<Expression> value)
+        : variableName(variableName),
+          value(std::move(value)) {}
+};
+
+// ============================================================
+// PRINT STATEMENT
+//
+// Examples:
+//
+//     দেখাও(x);
+//     দেখাও(x + y);
+//
+// ============================================================
+
+class PrintStatement : public Statement
+{
+public:
+    std::shared_ptr<Expression> expression;
+
+    explicit PrintStatement(
+        std::shared_ptr<Expression> expression)
+        : expression(std::move(expression)) {}
+};
+
+// ============================================================
+// BLOCK STATEMENT
+//
+// Example:
+//
+//     {
+//         x = x + 1;
+//         দেখাও(x);
+//     }
+//
+// ============================================================
+
+class BlockStatement : public Statement
+{
+public:
+    std::vector<std::shared_ptr<Statement>> statements;
+
+    BlockStatement() = default;
+
+    explicit BlockStatement(
+        std::vector<std::shared_ptr<Statement>> statements)
+        : statements(std::move(statements)) {}
+};
+
+// ============================================================
+// IF STATEMENT
+//
+// Example:
+//
+//     যদি (x > 10) {
+//         দেখাও(x);
+//     }
+//
+// ============================================================
+
+class IfStatement : public Statement
+{
+public:
+    std::shared_ptr<Expression> condition;
+
+    std::shared_ptr<BlockStatement> thenBranch;
+
+    std::shared_ptr<BlockStatement> elseBranch;
+
+    IfStatement(
+        std::shared_ptr<Expression> condition,
+        std::shared_ptr<BlockStatement> thenBranch,
+        std::shared_ptr<BlockStatement> elseBranch = nullptr)
+        : condition(std::move(condition)),
+          thenBranch(std::move(thenBranch)),
+          elseBranch(std::move(elseBranch)) {}
+};
+
+// ============================================================
+// WHILE STATEMENT
+//
+// Example:
+//
+//     যতক্ষণ (x < 10) {
+//         x = x + 1;
+//     }
+//
+// ============================================================
+
+class WhileStatement : public Statement
+{
+public:
+    std::shared_ptr<Expression> condition;
+
+    std::shared_ptr<BlockStatement> body;
+
+    WhileStatement(
+        std::shared_ptr<Expression> condition,
+        std::shared_ptr<BlockStatement> body)
+        : condition(std::move(condition)),
+          body(std::move(body)) {}
+};
+
+// ============================================================
+// PROGRAM
+//
+// Root node of the entire AST.
+//
+// Example:
+//
+//     সংখ্যা x = 10;
+//     x = x + 5;
+//     দেখাও(x);
+//
+// AST:
+//
+// Program
+//   |
+//   ├── Declaration
+//   ├── Assignment
+//   └── Print
+//
+// ============================================================
+
+class Program : public ASTNode
+{
+public:
+    std::vector<std::shared_ptr<Statement>> statements;
+
+    Program() = default;
+
+    explicit Program(
+        std::vector<std::shared_ptr<Statement>> statements)
+        : statements(std::move(statements)) {}
+};
+
+#endif // AST_H
