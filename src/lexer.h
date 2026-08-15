@@ -15,7 +15,7 @@ private:
     size_t current;
     int line;
 
-  std::unordered_map<std::string, BhashaTokenType> keywords;
+  std::unordered_map<std::string, AbhibyaktiTokenType> keywords;
     void scanToken();
     void number();
     void identifier();

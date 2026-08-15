@@ -4,38 +4,38 @@
 
 
 
-static std::string dataTypeToString(BhashaDataType type)
+static std::string dataTypeToString(AbhibyaktiDataType type)
 {
     switch (type)
     {
-    case BhashaDataType::NUMBER:
+    case AbhibyaktiDataType::NUMBER:
         return "NUMBER";
 
-    case BhashaDataType::DECIMAL:
+    case AbhibyaktiDataType::DECIMAL:
         return "DECIMAL";
 
-    case BhashaDataType::STRING:
+    case AbhibyaktiDataType::STRING:
         return "STRING";
 
-    case BhashaDataType::CHARACTER:
+    case AbhibyaktiDataType::CHARACTER:
         return "CHARACTER";
 
-    case BhashaDataType::BOOLEAN:
+    case AbhibyaktiDataType::BOOLEAN:
         return "BOOLEAN";
 
-    case BhashaDataType::LIST:
+    case AbhibyaktiDataType::LIST:
         return "LIST";
 
-    case BhashaDataType::LONG:
+    case AbhibyaktiDataType::LONG:
         return "LONG";
 
-    case BhashaDataType::POSITIVE:
+    case AbhibyaktiDataType::POSITIVE:
         return "POSITIVE";
 
-    case BhashaDataType::VOID:
+    case AbhibyaktiDataType::VOID:
         return "VOID";
 
-    case BhashaDataType::UNKNOWN:
+    case AbhibyaktiDataType::UNKNOWN:
     default:
         return "UNKNOWN";
     }
@@ -43,12 +43,12 @@ static std::string dataTypeToString(BhashaDataType type)
 
 
 
-static bool isNumericType(BhashaDataType type)
+static bool isNumericType(AbhibyaktiDataType type)
 {
-    return type == BhashaDataType::NUMBER ||
-           type == BhashaDataType::DECIMAL ||
-           type == BhashaDataType::LONG ||
-           type == BhashaDataType::POSITIVE;
+    return type == AbhibyaktiDataType::NUMBER ||
+           type == AbhibyaktiDataType::DECIMAL ||
+           type == AbhibyaktiDataType::LONG ||
+           type == AbhibyaktiDataType::POSITIVE;
 }
 
 
@@ -56,8 +56,8 @@ static bool isNumericType(BhashaDataType type)
 
 
 static bool areTypesCompatible(
-    BhashaDataType expected,
-    BhashaDataType actual)
+    AbhibyaktiDataType expected,
+    AbhibyaktiDataType actual)
 {
     // Same type
     if (expected == actual)
@@ -66,21 +66,21 @@ static bool areTypesCompatible(
     }
 
     // NUMBER -> DECIMAL
-    if (expected == BhashaDataType::DECIMAL &&
-        actual == BhashaDataType::NUMBER)
+    if (expected == AbhibyaktiDataType::DECIMAL &&
+        actual == AbhibyaktiDataType::NUMBER)
     {
         return true;
     }
 
     // NUMBER -> LONG
-    if (expected == BhashaDataType::LONG &&
-        actual == BhashaDataType::NUMBER)
+    if (expected == AbhibyaktiDataType::LONG &&
+        actual == AbhibyaktiDataType::NUMBER)
     {
         return true;
     }
 
     // Numeric -> POSITIVE
-    if (expected == BhashaDataType::POSITIVE &&
+    if (expected == AbhibyaktiDataType::POSITIVE &&
         isNumericType(actual))
     {
         return true;
@@ -166,12 +166,12 @@ void SemanticAnalyzer::analyzeStatement(
         }
 
         // Analyze initializer
-        BhashaDataType initializerType =
+        AbhibyaktiDataType initializerType =
             analyzeExpression(
                 declaration->initializer);
 
         // Check type compatibility
-        if (initializerType != BhashaDataType::UNKNOWN &&
+        if (initializerType != AbhibyaktiDataType::UNKNOWN &&
             !areTypesCompatible(
                 declaration->dataType,
                 initializerType))
@@ -226,12 +226,12 @@ void SemanticAnalyzer::analyzeStatement(
         }
 
         // Analyze RHS
-        BhashaDataType valueType =
+        AbhibyaktiDataType valueType =
             analyzeExpression(
                 assignment->value);
 
         // Check assignment type
-        if (valueType != BhashaDataType::UNKNOWN &&
+        if (valueType != AbhibyaktiDataType::UNKNOWN &&
             !areTypesCompatible(
                 it->second,
                 valueType))
@@ -287,13 +287,13 @@ void SemanticAnalyzer::analyzeStatement(
 
     if (ifStatement)
     {
-        BhashaDataType conditionType =
+        AbhibyaktiDataType conditionType =
             analyzeExpression(
                 ifStatement->condition);
 
         // IF condition must be BOOLEAN
-        if (conditionType != BhashaDataType::UNKNOWN &&
-            conditionType != BhashaDataType::BOOLEAN)
+        if (conditionType != AbhibyaktiDataType::UNKNOWN &&
+            conditionType != AbhibyaktiDataType::BOOLEAN)
         {
             addError(
                 "If condition must be BOOLEAN, but got " +
@@ -328,13 +328,13 @@ void SemanticAnalyzer::analyzeStatement(
 
     if (whileStatement)
     {
-        BhashaDataType conditionType =
+        AbhibyaktiDataType conditionType =
             analyzeExpression(
                 whileStatement->condition);
 
         // WHILE condition must be BOOLEAN
-        if (conditionType != BhashaDataType::UNKNOWN &&
-            conditionType != BhashaDataType::BOOLEAN)
+        if (conditionType != AbhibyaktiDataType::UNKNOWN &&
+            conditionType != AbhibyaktiDataType::BOOLEAN)
         {
             addError(
                 "While condition must be BOOLEAN, but got " +
@@ -376,12 +376,12 @@ void SemanticAnalyzer::analyzeBlock(
 // ANALYZE EXPRESSION
 
 
-BhashaDataType SemanticAnalyzer::analyzeExpression(
+AbhibyaktiDataType SemanticAnalyzer::analyzeExpression(
     const std::shared_ptr<Expression>& expression)
 {
     if (!expression)
     {
-        return BhashaDataType::UNKNOWN;
+        return AbhibyaktiDataType::UNKNOWN;
     }
 
     
@@ -416,7 +416,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                 variable->name +
                 "' is not declared.");
 
-            return BhashaDataType::UNKNOWN;
+            return AbhibyaktiDataType::UNKNOWN;
         }
 
         return it->second;
@@ -432,10 +432,10 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
 
     if (binary)
     {
-        BhashaDataType leftType =
+        AbhibyaktiDataType leftType =
             analyzeExpression(binary->left);
 
-        BhashaDataType rightType =
+        AbhibyaktiDataType rightType =
             analyzeExpression(binary->right);
 
         const std::string& op =
@@ -452,10 +452,10 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         {
             // String + String
             if (op == "+" &&
-                leftType == BhashaDataType::STRING &&
-                rightType == BhashaDataType::STRING)
+                leftType == AbhibyaktiDataType::STRING &&
+                rightType == AbhibyaktiDataType::STRING)
             {
-                return BhashaDataType::STRING;
+                return AbhibyaktiDataType::STRING;
             }
 
             // Both must be numeric
@@ -467,34 +467,34 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                     op +
                     "' requires numeric operands.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
             // Decimal modulo not allowed
             if (op == "%" &&
-                (leftType == BhashaDataType::DECIMAL ||
-                 rightType == BhashaDataType::DECIMAL))
+                (leftType == AbhibyaktiDataType::DECIMAL ||
+                 rightType == AbhibyaktiDataType::DECIMAL))
             {
                 addError(
                     "Modulo operator '%' cannot be used with DECIMAL values.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
             // Division produces DECIMAL
             if (op == "/")
             {
-                return BhashaDataType::DECIMAL;
+                return AbhibyaktiDataType::DECIMAL;
             }
 
             // Decimal result
-            if (leftType == BhashaDataType::DECIMAL ||
-                rightType == BhashaDataType::DECIMAL)
+            if (leftType == AbhibyaktiDataType::DECIMAL ||
+                rightType == AbhibyaktiDataType::DECIMAL)
             {
-                return BhashaDataType::DECIMAL;
+                return AbhibyaktiDataType::DECIMAL;
             }
 
-            return BhashaDataType::NUMBER;
+            return AbhibyaktiDataType::NUMBER;
         }
 
         
@@ -512,17 +512,17 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                     op +
                     "' requires numeric operands.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
-            return BhashaDataType::BOOLEAN;
+            return AbhibyaktiDataType::BOOLEAN;
         }
 
         if (op == "==" ||
             op == "!=")
         {
-            if (leftType != BhashaDataType::UNKNOWN &&
-                rightType != BhashaDataType::UNKNOWN)
+            if (leftType != AbhibyaktiDataType::UNKNOWN &&
+                rightType != AbhibyaktiDataType::UNKNOWN)
             {
                 bool compatible =
                     areTypesCompatible(
@@ -543,24 +543,24 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                 }
             }
 
-            return BhashaDataType::BOOLEAN;
+            return AbhibyaktiDataType::BOOLEAN;
         }
 
         if (op == "&&" ||
             op == "||")
         {
-            if (leftType != BhashaDataType::BOOLEAN ||
-                rightType != BhashaDataType::BOOLEAN)
+            if (leftType != AbhibyaktiDataType::BOOLEAN ||
+                rightType != AbhibyaktiDataType::BOOLEAN)
             {
                 addError(
                     "Logical operator '" +
                     op +
                     "' requires BOOLEAN operands.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
-            return BhashaDataType::BOOLEAN;
+            return AbhibyaktiDataType::BOOLEAN;
         }
 
         // Unknown operator
@@ -569,7 +569,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             op +
             "'.");
 
-        return BhashaDataType::UNKNOWN;
+        return AbhibyaktiDataType::UNKNOWN;
     }
 
 
@@ -580,7 +580,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
 
     if (unary)
     {
-        BhashaDataType operandType =
+        AbhibyaktiDataType operandType =
             analyzeExpression(
                 unary->operand);
 
@@ -590,16 +590,16 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         // NOT
         if (op == "!")
         {
-            if (operandType != BhashaDataType::UNKNOWN &&
-                operandType != BhashaDataType::BOOLEAN)
+            if (operandType != AbhibyaktiDataType::UNKNOWN &&
+                operandType != AbhibyaktiDataType::BOOLEAN)
             {
                 addError(
                     "Unary operator '!' requires BOOLEAN operand.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
-            return BhashaDataType::BOOLEAN;
+            return AbhibyaktiDataType::BOOLEAN;
         }
 
         // Unary + / -
@@ -613,7 +613,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
                     op +
                     "' requires numeric operand.");
 
-                return BhashaDataType::UNKNOWN;
+                return AbhibyaktiDataType::UNKNOWN;
             }
 
             return operandType;
@@ -624,10 +624,10 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             op +
             "'.");
 
-        return BhashaDataType::UNKNOWN;
+        return AbhibyaktiDataType::UNKNOWN;
     }
 
-    return BhashaDataType::UNKNOWN;
+    return AbhibyaktiDataType::UNKNOWN;
 }
 
 

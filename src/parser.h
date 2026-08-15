@@ -21,12 +21,12 @@ private:
     const Token &previous() const;
     bool isAtEnd() const;
     const Token &advance();
-    bool check(BhashaTokenType type) const;
-    bool match(BhashaTokenType type);
+    bool check(AbhibyaktiTokenType type) const;
+    bool match(AbhibyaktiTokenType type);
 
     // Error handling
     const Token &consume(
-        BhashaTokenType type,
+        AbhibyaktiTokenType type,
         const std::string &message);
 
     void error(const std::string &message);
@@ -53,8 +53,8 @@ private:
     std::shared_ptr<Expression> parsePrimary();
 
     // Convert token type to AST data type
-    BhashaDataType tokenToDataType(
-        BhashaTokenType type) const;
+    AbhibyaktiDataType tokenToDataType(
+        AbhibyaktiTokenType type) const;
 
 public:
     explicit Parser(

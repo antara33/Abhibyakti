@@ -1,4 +1,4 @@
-# Bhasha Programming Language
+# Abhibyakti Programming Language
 ## Language Specification
 
 Project: Bangla Programming Language Compiler  
@@ -13,14 +13,14 @@ Status: Initial Specification
 
 # 1. Introduction
 
-Bhasha is a simple Bangla-based programming language developed as
+Abhibyakti is a simple Bangla-based programming language developed as
 part of a Compiler Design project.
 
-The main purpose of Bhasha is to provide a programming language
+The main purpose of Abhibyakti is to provide a programming language
 whose syntax is easy to understand for Bangla-speaking beginners
 while demonstrating the major phases of compiler construction.
 
-The compiler will process Bhasha source code through the following
+The compiler will process Abhibyakti source code through the following
 major stages:
 
 1. Lexical Analysis
@@ -37,7 +37,7 @@ executable Python source code as the target output.
 
 # 2. Design Goals
 
-The main goals of Bhasha are:
+The main goals of Abhibyakti are:
 
 - Provide a simple Bangla-based programming syntax.
 - Demonstrate the major phases of compiler construction.
@@ -48,14 +48,14 @@ The main goals of Bhasha are:
 - Perform basic type checking.
 - Support conditional statements.
 - Support looping constructs.
-- Generate target Python code from valid Bhasha programs.
+- Generate target Python code from valid Abhibyakti programs.
 - Provide understandable error messages for users.
 
 
 
 # 3. Character Set
 
-Bhasha supports:
+Abhibyakti supports:
 
 - Bangla Unicode characters
 - English alphabet characters where required
@@ -74,7 +74,7 @@ encoding.
 |---|---|---|
 | সংখ্যা | Integer | `সংখ্যা x = 10;` |
 | দশমিক | Decimal / Floating Point | `দশমিক x = 3.14;` |
-| লেখা | String | `লেখা name = "Bhasha";` |
+| লেখা | String | `লেখা name = "Abhibyakti";` |
 | চরিত্র | Character | `চরিত্র grade = 'A';` |
 | সত্যমিথ্যা | Boolean | `সত্যমিথ্যা pass = সত্য;` |
 | তালিকা | List / Array | `তালিকা nums = [1, 2, 3];` |
@@ -99,7 +99,7 @@ pipeline is functional.
 
 # 5. Boolean Values
 
-Bhasha uses Bangla keywords for Boolean values.
+Abhibyakti uses Bangla keywords for Boolean values.
 
 ```text
 সত্য

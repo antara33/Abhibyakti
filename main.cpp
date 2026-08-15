@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     SetConsoleCP(CP_UTF8);
 
     std::cout << "========================================\n";
-    std::cout << "        BHASHA COMPILER\n";
+    std::cout << "        Abhibyakti COMPILER\n";
     std::cout << "========================================\n\n";
 
     std::string source;

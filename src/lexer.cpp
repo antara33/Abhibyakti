@@ -4,25 +4,25 @@ Lexer::Lexer(const std::string& source)
     : source(source), start(0), current(0), line(1) {
 
     // Data type keywords
-    keywords["সংখ্যা"] = BhashaTokenType::NUMBER_TYPE;
-    keywords["দশমিক"] = BhashaTokenType::DECIMAL_TYPE;
-    keywords["লেখা"] = BhashaTokenType::STRING_TYPE;
-    keywords["চরিত্র"] = BhashaTokenType::CHAR_TYPE;
-    keywords["সত্যমিথ্যা"] = BhashaTokenType::BOOLEAN_TYPE;
-    keywords["তালিকা"] = BhashaTokenType::LIST_TYPE;
-    keywords["দীর্ঘসংখ্যা"] = BhashaTokenType::LONG_TYPE;
-    keywords["ধনাত্মক"] = BhashaTokenType::POSITIVE_TYPE;
-    keywords["শূন্য"] = BhashaTokenType::VOID_TYPE;
+    keywords["সংখ্যা"] = AbhibyaktiTokenType::NUMBER_TYPE;
+    keywords["দশমিক"] = AbhibyaktiTokenType::DECIMAL_TYPE;
+    keywords["লেখা"] = AbhibyaktiTokenType::STRING_TYPE;
+    keywords["চরিত্র"] = AbhibyaktiTokenType::CHAR_TYPE;
+    keywords["সত্যমিথ্যা"] = AbhibyaktiTokenType::BOOLEAN_TYPE;
+    keywords["তালিকা"] = AbhibyaktiTokenType::LIST_TYPE;
+    keywords["দীর্ঘসংখ্যা"] = AbhibyaktiTokenType::LONG_TYPE;
+    keywords["ধনাত্মক"] = AbhibyaktiTokenType::POSITIVE_TYPE;
+    keywords["শূন্য"] = AbhibyaktiTokenType::VOID_TYPE;
 
     // Control keywords
-    keywords["যদি"] = BhashaTokenType::IF;
-    keywords["নাহলে"] = BhashaTokenType::ELSE;
-    keywords["যতক্ষণ"] = BhashaTokenType::WHILE;
-    keywords["দেখাও"] = BhashaTokenType::PRINT;
+    keywords["যদি"] = AbhibyaktiTokenType::IF;
+    keywords["নাহলে"] = AbhibyaktiTokenType::ELSE;
+    keywords["যতক্ষণ"] = AbhibyaktiTokenType::WHILE;
+    keywords["দেখাও"] = AbhibyaktiTokenType::PRINT;
 
     // Boolean keywords
-    keywords["সত্য"] = BhashaTokenType::BOOLEAN_TRUE;
-    keywords["মিথ্যা"] = BhashaTokenType::BOOLEAN_FALSE;
+    keywords["সত্য"] = AbhibyaktiTokenType::BOOLEAN_TRUE;
+    keywords["মিথ্যা"] = AbhibyaktiTokenType::BOOLEAN_FALSE;
 }
 
 
@@ -37,7 +37,7 @@ std::vector<Token> Lexer::tokenize() {
 
     // End of file token
     tokens.push_back(
-        Token(BhashaTokenType::END_OF_FILE, "", line)
+        Token(AbhibyaktiTokenType::END_OF_FILE, "", line)
     );
 
     return tokens;
@@ -84,13 +84,13 @@ void Lexer::number() {
     if (isDecimal) {
 
         tokens.push_back(
-            Token(BhashaTokenType::DECIMAL, value, line)
+            Token(AbhibyaktiTokenType::DECIMAL, value, line)
         );
 
     } else {
 
         tokens.push_back(
-            Token(BhashaTokenType::INTEGER, value, line)
+            Token(AbhibyaktiTokenType::INTEGER, value, line)
         );
     }
 }
@@ -140,7 +140,7 @@ void Lexer::identifier() {
     } else {
 
         tokens.push_back(
-            Token(BhashaTokenType::IDENTIFIER, text, line)
+            Token(AbhibyaktiTokenType::IDENTIFIER, text, line)
         );
     }
 }
@@ -157,7 +157,7 @@ void Lexer::scanToken() {
         case '+':
 
             tokens.push_back(
-                Token(BhashaTokenType::PLUS, "+", line)
+                Token(AbhibyaktiTokenType::PLUS, "+", line)
             );
 
             break;
@@ -165,7 +165,7 @@ void Lexer::scanToken() {
         case '-':
 
             tokens.push_back(
-                Token(BhashaTokenType::MINUS, "-", line)
+                Token(AbhibyaktiTokenType::MINUS, "-", line)
             );
 
             break;
@@ -173,7 +173,7 @@ void Lexer::scanToken() {
         case '*':
 
             tokens.push_back(
-                Token(BhashaTokenType::MULTIPLY, "*", line)
+                Token(AbhibyaktiTokenType::MULTIPLY, "*", line)
             );
 
             break;
@@ -181,7 +181,7 @@ void Lexer::scanToken() {
         case '/':
 
             tokens.push_back(
-                Token(BhashaTokenType::DIVIDE, "/", line)
+                Token(AbhibyaktiTokenType::DIVIDE, "/", line)
             );
 
             break;
@@ -189,7 +189,7 @@ void Lexer::scanToken() {
         case '%':
 
             tokens.push_back(
-                Token(BhashaTokenType::MODULO, "%", line)
+                Token(AbhibyaktiTokenType::MODULO, "%", line)
             );
 
             break;
@@ -204,13 +204,13 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::EQUAL_EQUAL, "==", line)
+                    Token(AbhibyaktiTokenType::EQUAL_EQUAL, "==", line)
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::ASSIGN, "=", line)
+                    Token(AbhibyaktiTokenType::ASSIGN, "=", line)
                 );
             }
 
@@ -226,13 +226,13 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::GREATER_EQUAL, ">=", line)
+                    Token(AbhibyaktiTokenType::GREATER_EQUAL, ">=", line)
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::GREATER, ">", line)
+                    Token(AbhibyaktiTokenType::GREATER, ">", line)
                 );
             }
 
@@ -248,13 +248,13 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::LESS_EQUAL, "<=", line)
+                    Token(AbhibyaktiTokenType::LESS_EQUAL, "<=", line)
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::LESS, "<", line)
+                    Token(AbhibyaktiTokenType::LESS, "<", line)
                 );
             }
 
@@ -270,13 +270,13 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::NOT_EQUAL, "!=", line)
+                    Token(AbhibyaktiTokenType::NOT_EQUAL, "!=", line)
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::NOT, "!", line)
+                    Token(AbhibyaktiTokenType::NOT, "!", line)
                 );
             }
 
@@ -287,7 +287,7 @@ void Lexer::scanToken() {
         case '(':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_PAREN, "(", line)
+                Token(AbhibyaktiTokenType::LEFT_PAREN, "(", line)
             );
 
             break;
@@ -295,7 +295,7 @@ void Lexer::scanToken() {
         case ')':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_PAREN, ")", line)
+                Token(AbhibyaktiTokenType::RIGHT_PAREN, ")", line)
             );
 
             break;
@@ -305,7 +305,7 @@ void Lexer::scanToken() {
         case '{':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_BRACE, "{", line)
+                Token(AbhibyaktiTokenType::LEFT_BRACE, "{", line)
             );
 
             break;
@@ -313,7 +313,7 @@ void Lexer::scanToken() {
         case '}':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_BRACE, "}", line)
+                Token(AbhibyaktiTokenType::RIGHT_BRACE, "}", line)
             );
 
             break;
@@ -323,7 +323,7 @@ void Lexer::scanToken() {
         case '[':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_BRACKET, "[", line)
+                Token(AbhibyaktiTokenType::LEFT_BRACKET, "[", line)
             );
 
             break;
@@ -331,7 +331,7 @@ void Lexer::scanToken() {
         case ']':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_BRACKET, "]", line)
+                Token(AbhibyaktiTokenType::RIGHT_BRACKET, "]", line)
             );
 
             break;
@@ -341,7 +341,7 @@ void Lexer::scanToken() {
         case ';':
 
             tokens.push_back(
-                Token(BhashaTokenType::SEMICOLON, ";", line)
+                Token(AbhibyaktiTokenType::SEMICOLON, ";", line)
             );
 
             break;
@@ -349,7 +349,7 @@ void Lexer::scanToken() {
         case ',':
 
             tokens.push_back(
-                Token(BhashaTokenType::COMMA, ",", line)
+                Token(AbhibyaktiTokenType::COMMA, ",", line)
             );
 
             break;
@@ -404,7 +404,7 @@ void Lexer::scanToken() {
 
                 tokens.push_back(
                     Token(
-                        BhashaTokenType::UNKNOWN,
+                        AbhibyaktiTokenType::UNKNOWN,
                         std::string(1, c),
                         line
                     )

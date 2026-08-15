@@ -25,7 +25,7 @@ const Token &Parser::previous() const
 
 bool Parser::isAtEnd() const
 {
-    return peek().type == BhashaTokenType::END_OF_FILE;
+    return peek().type == AbhibyaktiTokenType::END_OF_FILE;
 }
 
 const Token &Parser::advance()
@@ -38,17 +38,17 @@ const Token &Parser::advance()
     return previous();
 }
 
-bool Parser::check(BhashaTokenType type) const
+bool Parser::check(AbhibyaktiTokenType type) const
 {
     if (isAtEnd())
     {
-        return type == BhashaTokenType::END_OF_FILE;
+        return type == AbhibyaktiTokenType::END_OF_FILE;
     }
 
     return peek().type == type;
 }
 
-bool Parser::match(BhashaTokenType type)
+bool Parser::match(AbhibyaktiTokenType type)
 {
     if (!check(type))
     {
@@ -61,7 +61,7 @@ bool Parser::match(BhashaTokenType type)
 
 
 const Token &Parser::consume(
-    BhashaTokenType type,
+    AbhibyaktiTokenType type,
     const std::string &message)
 {
     if (check(type))
@@ -91,21 +91,21 @@ void Parser::synchronize()
 
     while (!isAtEnd())
     {
-        if (previous().type == BhashaTokenType::SEMICOLON)
+        if (previous().type == AbhibyaktiTokenType::SEMICOLON)
         {
             return;
         }
 
         switch (peek().type)
         {
-        case BhashaTokenType::NUMBER_TYPE:
-        case BhashaTokenType::DECIMAL_TYPE:
-        case BhashaTokenType::STRING_TYPE:
-        case BhashaTokenType::CHAR_TYPE:
-        case BhashaTokenType::BOOLEAN_TYPE:
-        case BhashaTokenType::IF:
-        case BhashaTokenType::WHILE:
-        case BhashaTokenType::PRINT:
+        case AbhibyaktiTokenType::NUMBER_TYPE:
+        case AbhibyaktiTokenType::DECIMAL_TYPE:
+        case AbhibyaktiTokenType::STRING_TYPE:
+        case AbhibyaktiTokenType::CHAR_TYPE:
+        case AbhibyaktiTokenType::BOOLEAN_TYPE:
+        case AbhibyaktiTokenType::IF:
+        case AbhibyaktiTokenType::WHILE:
+        case AbhibyaktiTokenType::PRINT:
             return;
 
         default:
@@ -146,45 +146,45 @@ std::shared_ptr<Statement> Parser::parseStatement()
 {
     // Variable declaration
     if (
-        check(BhashaTokenType::NUMBER_TYPE) ||
-        check(BhashaTokenType::DECIMAL_TYPE) ||
-        check(BhashaTokenType::STRING_TYPE) ||
-        check(BhashaTokenType::CHAR_TYPE) ||
-        check(BhashaTokenType::BOOLEAN_TYPE) ||
-        check(BhashaTokenType::LIST_TYPE) ||
-        check(BhashaTokenType::LONG_TYPE) ||
-        check(BhashaTokenType::POSITIVE_TYPE) ||
-        check(BhashaTokenType::VOID_TYPE))
+        check(AbhibyaktiTokenType::NUMBER_TYPE) ||
+        check(AbhibyaktiTokenType::DECIMAL_TYPE) ||
+        check(AbhibyaktiTokenType::STRING_TYPE) ||
+        check(AbhibyaktiTokenType::CHAR_TYPE) ||
+        check(AbhibyaktiTokenType::BOOLEAN_TYPE) ||
+        check(AbhibyaktiTokenType::LIST_TYPE) ||
+        check(AbhibyaktiTokenType::LONG_TYPE) ||
+        check(AbhibyaktiTokenType::POSITIVE_TYPE) ||
+        check(AbhibyaktiTokenType::VOID_TYPE))
     {
         return parseDeclaration();
     }
 
     // If
-    if (match(BhashaTokenType::IF))
+    if (match(AbhibyaktiTokenType::IF))
     {
         return parseIf();
     }
 
     // While
-    if (match(BhashaTokenType::WHILE))
+    if (match(AbhibyaktiTokenType::WHILE))
     {
         return parseWhile();
     }
 
     // Print
-    if (match(BhashaTokenType::PRINT))
+    if (match(AbhibyaktiTokenType::PRINT))
     {
         return parsePrint();
     }
 
     // Block
-    if (match(BhashaTokenType::LEFT_BRACE))
+    if (match(AbhibyaktiTokenType::LEFT_BRACE))
     {
         return parseBlock();
     }
 
     // Assignment
-    if (check(BhashaTokenType::IDENTIFIER))
+    if (check(AbhibyaktiTokenType::IDENTIFIER))
     {
         return parseAssignment();
     }
@@ -200,24 +200,24 @@ std::shared_ptr<Statement> Parser::parseStatement()
 
 std::shared_ptr<Statement> Parser::parseDeclaration()
 {
-    BhashaTokenType typeToken = advance().type;
+    AbhibyaktiTokenType typeToken = advance().type;
 
-    BhashaDataType dataType =
+    AbhibyaktiDataType dataType =
         tokenToDataType(typeToken);
 
     const Token &name =
         consume(
-            BhashaTokenType::IDENTIFIER,
+            AbhibyaktiTokenType::IDENTIFIER,
             "Expected variable name after data type.");
 
     consume(
-        BhashaTokenType::ASSIGN,
+        AbhibyaktiTokenType::ASSIGN,
         "Expected '=' after variable name.");
 
     auto initializer = parseExpression();
 
     consume(
-        BhashaTokenType::SEMICOLON,
+        AbhibyaktiTokenType::SEMICOLON,
         "Expected ';' after declaration.");
 
     return std::make_shared<DeclarationStatement>(
@@ -233,13 +233,13 @@ std::shared_ptr<Statement> Parser::parseAssignment()
     const Token &name = advance();
 
     consume(
-        BhashaTokenType::ASSIGN,
+        AbhibyaktiTokenType::ASSIGN,
         "Expected '=' after variable name.");
 
     auto value = parseExpression();
 
     consume(
-        BhashaTokenType::SEMICOLON,
+        AbhibyaktiTokenType::SEMICOLON,
         "Expected ';' after assignment.");
 
     return std::make_shared<AssignmentStatement>(
@@ -254,19 +254,19 @@ std::shared_ptr<Statement> Parser::parsePrint()
    
 
     bool hasParentheses =
-        match(BhashaTokenType::LEFT_PAREN);
+        match(AbhibyaktiTokenType::LEFT_PAREN);
 
     auto expression = parseExpression();
 
     if (hasParentheses)
     {
         consume(
-            BhashaTokenType::RIGHT_PAREN,
+            AbhibyaktiTokenType::RIGHT_PAREN,
             "Expected ')' after print expression.");
     }
 
     consume(
-        BhashaTokenType::SEMICOLON,
+        AbhibyaktiTokenType::SEMICOLON,
         "Expected ';' after print statement.");
 
     return std::make_shared<PrintStatement>(
@@ -278,27 +278,27 @@ std::shared_ptr<Statement> Parser::parsePrint()
 std::shared_ptr<Statement> Parser::parseIf()
 {
     consume(
-        BhashaTokenType::LEFT_PAREN,
+        AbhibyaktiTokenType::LEFT_PAREN,
         "Expected '(' after যদি.");
 
     auto condition = parseExpression();
 
     consume(
-        BhashaTokenType::RIGHT_PAREN,
+        AbhibyaktiTokenType::RIGHT_PAREN,
         "Expected ')' after condition.");
 
     consume(
-        BhashaTokenType::LEFT_BRACE,
+        AbhibyaktiTokenType::LEFT_BRACE,
         "Expected '{' before if body.");
 
     auto thenBranch = parseBlock();
 
     std::shared_ptr<BlockStatement> elseBranch = nullptr;
 
-    if (match(BhashaTokenType::ELSE))
+    if (match(AbhibyaktiTokenType::ELSE))
     {
         consume(
-            BhashaTokenType::LEFT_BRACE,
+            AbhibyaktiTokenType::LEFT_BRACE,
             "Expected '{' before else body.");
 
         elseBranch = parseBlock();
@@ -315,17 +315,17 @@ std::shared_ptr<Statement> Parser::parseIf()
 std::shared_ptr<Statement> Parser::parseWhile()
 {
     consume(
-        BhashaTokenType::LEFT_PAREN,
+        AbhibyaktiTokenType::LEFT_PAREN,
         "Expected '(' after যতক্ষণ.");
 
     auto condition = parseExpression();
 
     consume(
-        BhashaTokenType::RIGHT_PAREN,
+        AbhibyaktiTokenType::RIGHT_PAREN,
         "Expected ')' after condition.");
 
     consume(
-        BhashaTokenType::LEFT_BRACE,
+        AbhibyaktiTokenType::LEFT_BRACE,
         "Expected '{' before while body.");
 
     auto body = parseBlock();
@@ -342,7 +342,7 @@ std::shared_ptr<BlockStatement> Parser::parseBlock()
     std::vector<std::shared_ptr<Statement>> statements;
 
     while (
-        !check(BhashaTokenType::RIGHT_BRACE) &&
+        !check(AbhibyaktiTokenType::RIGHT_BRACE) &&
         !isAtEnd())
     {
         auto statement = parseStatement();
@@ -354,7 +354,7 @@ std::shared_ptr<BlockStatement> Parser::parseBlock()
     }
 
     consume(
-        BhashaTokenType::RIGHT_BRACE,
+        AbhibyaktiTokenType::RIGHT_BRACE,
         "Expected '}' after block.");
 
     return std::make_shared<BlockStatement>(
@@ -374,7 +374,7 @@ std::shared_ptr<Expression> Parser::parseOr()
 {
     auto expression = parseAnd();
 
-    while (match(BhashaTokenType::OR))
+    while (match(AbhibyaktiTokenType::OR))
     {
         auto right = parseAnd();
 
@@ -393,7 +393,7 @@ std::shared_ptr<Expression> Parser::parseAnd()
 {
     auto expression = parseEquality();
 
-    while (match(BhashaTokenType::AND))
+    while (match(AbhibyaktiTokenType::AND))
     {
         auto right = parseEquality();
 
@@ -413,18 +413,18 @@ std::shared_ptr<Expression> Parser::parseEquality()
     auto expression = parseComparison();
 
     while (
-        check(BhashaTokenType::EQUAL_EQUAL) ||
-        check(BhashaTokenType::NOT_EQUAL))
+        check(AbhibyaktiTokenType::EQUAL_EQUAL) ||
+        check(AbhibyaktiTokenType::NOT_EQUAL))
     {
         std::string op;
 
-        if (match(BhashaTokenType::EQUAL_EQUAL))
+        if (match(AbhibyaktiTokenType::EQUAL_EQUAL))
         {
             op = "==";
         }
         else
         {
-            match(BhashaTokenType::NOT_EQUAL);
+            match(AbhibyaktiTokenType::NOT_EQUAL);
             op = "!=";
         }
 
@@ -447,28 +447,28 @@ std::shared_ptr<Expression> Parser::parseComparison()
     auto expression = parseTerm();
 
     while (
-        check(BhashaTokenType::GREATER) ||
-        check(BhashaTokenType::LESS) ||
-        check(BhashaTokenType::GREATER_EQUAL) ||
-        check(BhashaTokenType::LESS_EQUAL))
+        check(AbhibyaktiTokenType::GREATER) ||
+        check(AbhibyaktiTokenType::LESS) ||
+        check(AbhibyaktiTokenType::GREATER_EQUAL) ||
+        check(AbhibyaktiTokenType::LESS_EQUAL))
     {
         std::string op;
 
-        if (match(BhashaTokenType::GREATER))
+        if (match(AbhibyaktiTokenType::GREATER))
         {
             op = ">";
         }
-        else if (match(BhashaTokenType::LESS))
+        else if (match(AbhibyaktiTokenType::LESS))
         {
             op = "<";
         }
-        else if (match(BhashaTokenType::GREATER_EQUAL))
+        else if (match(AbhibyaktiTokenType::GREATER_EQUAL))
         {
             op = ">=";
         }
         else
         {
-            match(BhashaTokenType::LESS_EQUAL);
+            match(AbhibyaktiTokenType::LESS_EQUAL);
             op = "<=";
         }
 
@@ -491,18 +491,18 @@ std::shared_ptr<Expression> Parser::parseTerm()
     auto expression = parseFactor();
 
     while (
-        check(BhashaTokenType::PLUS) ||
-        check(BhashaTokenType::MINUS))
+        check(AbhibyaktiTokenType::PLUS) ||
+        check(AbhibyaktiTokenType::MINUS))
     {
         std::string op;
 
-        if (match(BhashaTokenType::PLUS))
+        if (match(AbhibyaktiTokenType::PLUS))
         {
             op = "+";
         }
         else
         {
-            match(BhashaTokenType::MINUS);
+            match(AbhibyaktiTokenType::MINUS);
             op = "-";
         }
 
@@ -525,23 +525,23 @@ std::shared_ptr<Expression> Parser::parseFactor()
     auto expression = parseUnary();
 
     while (
-        check(BhashaTokenType::MULTIPLY) ||
-        check(BhashaTokenType::DIVIDE) ||
-        check(BhashaTokenType::MODULO))
+        check(AbhibyaktiTokenType::MULTIPLY) ||
+        check(AbhibyaktiTokenType::DIVIDE) ||
+        check(AbhibyaktiTokenType::MODULO))
     {
         std::string op;
 
-        if (match(BhashaTokenType::MULTIPLY))
+        if (match(AbhibyaktiTokenType::MULTIPLY))
         {
             op = "*";
         }
-        else if (match(BhashaTokenType::DIVIDE))
+        else if (match(AbhibyaktiTokenType::DIVIDE))
         {
             op = "/";
         }
         else
         {
-            match(BhashaTokenType::MODULO);
+            match(AbhibyaktiTokenType::MODULO);
             op = "%";
         }
 
@@ -561,7 +561,7 @@ std::shared_ptr<Expression> Parser::parseFactor()
 
 std::shared_ptr<Expression> Parser::parseUnary()
 {
-    if (match(BhashaTokenType::NOT))
+    if (match(AbhibyaktiTokenType::NOT))
     {
         auto operand = parseUnary();
 
@@ -570,7 +570,7 @@ std::shared_ptr<Expression> Parser::parseUnary()
             operand);
     }
 
-    if (match(BhashaTokenType::MINUS))
+    if (match(AbhibyaktiTokenType::MINUS))
     {
         auto operand = parseUnary();
 
@@ -579,7 +579,7 @@ std::shared_ptr<Expression> Parser::parseUnary()
             operand);
     }
 
-    if (match(BhashaTokenType::PLUS))
+    if (match(AbhibyaktiTokenType::PLUS))
     {
         auto operand = parseUnary();
 
@@ -596,67 +596,67 @@ std::shared_ptr<Expression> Parser::parseUnary()
 std::shared_ptr<Expression> Parser::parsePrimary()
 {
     // Integer
-    if (match(BhashaTokenType::INTEGER))
+    if (match(AbhibyaktiTokenType::INTEGER))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::NUMBER);
+            AbhibyaktiDataType::NUMBER);
     }
 
     // Decimal
-    if (match(BhashaTokenType::DECIMAL))
+    if (match(AbhibyaktiTokenType::DECIMAL))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::DECIMAL);
+            AbhibyaktiDataType::DECIMAL);
     }
 
     // String
-    if (match(BhashaTokenType::STRING))
+    if (match(AbhibyaktiTokenType::STRING))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::STRING);
+            AbhibyaktiDataType::STRING);
     }
 
     // Character
-    if (match(BhashaTokenType::CHARACTER))
+    if (match(AbhibyaktiTokenType::CHARACTER))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::CHARACTER);
+            AbhibyaktiDataType::CHARACTER);
     }
 
     // Boolean true
-    if (match(BhashaTokenType::BOOLEAN_TRUE))
+    if (match(AbhibyaktiTokenType::BOOLEAN_TRUE))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::BOOLEAN);
+            AbhibyaktiDataType::BOOLEAN);
     }
 
     // Boolean false
-    if (match(BhashaTokenType::BOOLEAN_FALSE))
+    if (match(AbhibyaktiTokenType::BOOLEAN_FALSE))
     {
         return std::make_shared<LiteralExpression>(
             previous().lexeme,
-            BhashaDataType::BOOLEAN);
+            AbhibyaktiDataType::BOOLEAN);
     }
 
     // Identifier
-    if (match(BhashaTokenType::IDENTIFIER))
+    if (match(AbhibyaktiTokenType::IDENTIFIER))
     {
         return std::make_shared<VariableExpression>(
             previous().lexeme);
     }
 
     // Parenthesized expression
-    if (match(BhashaTokenType::LEFT_PAREN))
+    if (match(AbhibyaktiTokenType::LEFT_PAREN))
     {
         auto expression = parseExpression();
 
         consume(
-            BhashaTokenType::RIGHT_PAREN,
+            AbhibyaktiTokenType::RIGHT_PAREN,
             "Expected ')' after expression.");
 
         return expression;
@@ -672,44 +672,44 @@ std::shared_ptr<Expression> Parser::parsePrimary()
 
     return std::make_shared<LiteralExpression>(
         "0",
-        BhashaDataType::NUMBER);
+        AbhibyaktiDataType::NUMBER);
 }
 
 
 
-BhashaDataType Parser::tokenToDataType(
-    BhashaTokenType type) const
+AbhibyaktiDataType Parser::tokenToDataType(
+    AbhibyaktiTokenType type) const
 {
     switch (type)
     {
-    case BhashaTokenType::NUMBER_TYPE:
-        return BhashaDataType::NUMBER;
+    case AbhibyaktiTokenType::NUMBER_TYPE:
+        return AbhibyaktiDataType::NUMBER;
 
-    case BhashaTokenType::DECIMAL_TYPE:
-        return BhashaDataType::DECIMAL;
+    case AbhibyaktiTokenType::DECIMAL_TYPE:
+        return AbhibyaktiDataType::DECIMAL;
 
-    case BhashaTokenType::STRING_TYPE:
-        return BhashaDataType::STRING;
+    case AbhibyaktiTokenType::STRING_TYPE:
+        return AbhibyaktiDataType::STRING;
 
-    case BhashaTokenType::CHAR_TYPE:
-        return BhashaDataType::CHARACTER;
+    case AbhibyaktiTokenType::CHAR_TYPE:
+        return AbhibyaktiDataType::CHARACTER;
 
-    case BhashaTokenType::BOOLEAN_TYPE:
-        return BhashaDataType::BOOLEAN;
+    case AbhibyaktiTokenType::BOOLEAN_TYPE:
+        return AbhibyaktiDataType::BOOLEAN;
 
-    case BhashaTokenType::LIST_TYPE:
-        return BhashaDataType::LIST;
+    case AbhibyaktiTokenType::LIST_TYPE:
+        return AbhibyaktiDataType::LIST;
 
-    case BhashaTokenType::LONG_TYPE:
-        return BhashaDataType::LONG;
+    case AbhibyaktiTokenType::LONG_TYPE:
+        return AbhibyaktiDataType::LONG;
 
-    case BhashaTokenType::POSITIVE_TYPE:
-        return BhashaDataType::POSITIVE;
+    case AbhibyaktiTokenType::POSITIVE_TYPE:
+        return AbhibyaktiDataType::POSITIVE;
 
-    case BhashaTokenType::VOID_TYPE:
-        return BhashaDataType::VOID;
+    case AbhibyaktiTokenType::VOID_TYPE:
+        return AbhibyaktiDataType::VOID;
 
     default:
-        return BhashaDataType::UNKNOWN;
+        return AbhibyaktiDataType::UNKNOWN;
     }
 }

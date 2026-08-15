@@ -43,7 +43,7 @@ std::string CodeGenerator::generateLiteral(
     }
 
     // Boolean
-    if (expression->dataType == BhashaDataType::BOOLEAN)
+    if (expression->dataType == AbhibyaktiDataType::BOOLEAN)
     {
         if (expression->value == "সত্য" ||
             expression->value == "true")
@@ -93,7 +93,7 @@ std::string CodeGenerator::generateBinary(
     std::string op =
         expression->operatorSymbol;
 
-    // Bhasha → Python logical operators
+    // Abhibyakti → Python logical operators
     if (op == "&&")
     {
         op = "and";
@@ -122,7 +122,7 @@ std::string CodeGenerator::generateUnary(
     std::string op =
         expression->operatorSymbol;
 
-    // Bhasha ! → Python not
+    // Abhibyakti ! → Python not
     if (op == "!")
     {
         return "(not " + operand + ")";

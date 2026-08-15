@@ -24,20 +24,20 @@ int main()
     // সংখ্যা x = 10;
     validProgram->statements.push_back(
         std::make_shared<DeclarationStatement>(
-            BhashaDataType::NUMBER,
+            AbhibyaktiDataType::NUMBER,
             "x",
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER)));
+                AbhibyaktiDataType::NUMBER)));
 
     // দশমিক y = 5.5;
     validProgram->statements.push_back(
         std::make_shared<DeclarationStatement>(
-            BhashaDataType::DECIMAL,
+            AbhibyaktiDataType::DECIMAL,
             "y",
             std::make_shared<LiteralExpression>(
                 "5.5",
-                BhashaDataType::DECIMAL)));
+                AbhibyaktiDataType::DECIMAL)));
 
     // x = x + 5;
     auto xVariable =
@@ -46,7 +46,7 @@ int main()
     auto five =
         std::make_shared<LiteralExpression>(
             "5",
-            BhashaDataType::NUMBER);
+            AbhibyaktiDataType::NUMBER);
 
     auto addition =
         std::make_shared<BinaryExpression>(
@@ -92,7 +92,7 @@ int main()
             "x",
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER)));
+                AbhibyaktiDataType::NUMBER)));
 
     SemanticAnalyzer analyzer2;
 
@@ -119,11 +119,11 @@ int main()
 
     typeMismatchProgram->statements.push_back(
         std::make_shared<DeclarationStatement>(
-            BhashaDataType::NUMBER,
+            AbhibyaktiDataType::NUMBER,
             "x",
             std::make_shared<LiteralExpression>(
                 "5.5",
-                BhashaDataType::DECIMAL)));
+                AbhibyaktiDataType::DECIMAL)));
 
     SemanticAnalyzer analyzer3;
 
@@ -150,19 +150,19 @@ int main()
 
     duplicateProgram->statements.push_back(
         std::make_shared<DeclarationStatement>(
-            BhashaDataType::NUMBER,
+            AbhibyaktiDataType::NUMBER,
             "x",
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER)));
+                AbhibyaktiDataType::NUMBER)));
 
     duplicateProgram->statements.push_back(
         std::make_shared<DeclarationStatement>(
-            BhashaDataType::NUMBER,
+            AbhibyaktiDataType::NUMBER,
             "x",
             std::make_shared<LiteralExpression>(
                 "20",
-                BhashaDataType::NUMBER)));
+                AbhibyaktiDataType::NUMBER)));
 
     SemanticAnalyzer analyzer4;
 
@@ -194,13 +194,13 @@ int main()
         std::make_shared<PrintStatement>(
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER)));
+                AbhibyaktiDataType::NUMBER)));
 
     ifProgram->statements.push_back(
         std::make_shared<IfStatement>(
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER),
+                AbhibyaktiDataType::NUMBER),
             ifBody));
 
     SemanticAnalyzer analyzer5;
@@ -230,11 +230,11 @@ int main()
         std::make_shared<BinaryExpression>(
             std::make_shared<LiteralExpression>(
                 "10",
-                BhashaDataType::NUMBER),
+                AbhibyaktiDataType::NUMBER),
             "&&",
             std::make_shared<LiteralExpression>(
                 "20",
-                BhashaDataType::NUMBER));
+                AbhibyaktiDataType::NUMBER));
 
     logicalProgram->statements.push_back(
         std::make_shared<PrintStatement>(
