@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <windows.h>
 #include <vector>
@@ -35,6 +36,9 @@ int main()
 যদি (লাভ > 1000) {
     দেখাও লাভ;
 }
+নাহলে {
+    দেখাও খরচ;
+}
 
 যদি (লাভ < 0) {
     দেখাও খরচ;
@@ -50,26 +54,16 @@ int main()
 }
 )";
 
-    // ========================================================
-    // SOURCE CODE
-    // ========================================================
-
     std::cout << "========== SOURCE CODE ==========\n\n";
     std::cout << source << "\n";
-
-    // ========================================================
-    // LEXICAL ANALYSIS
-    // ========================================================
 
     std::cout << "========== LEXICAL ANALYSIS ==========\n\n";
 
     Lexer lexer(source);
-
     std::vector<Token> tokens = lexer.tokenize();
 
     std::cout << "Total tokens generated: "
-              << tokens.size()
-              << "\n\n";
+              << tokens.size() << "\n\n";
 
     for (const Token &token : tokens)
     {
@@ -83,18 +77,12 @@ int main()
 
     std::cout << "\nLEXER: SUCCESS\n\n";
 
-    // ========================================================
-    // SYNTAX ANALYSIS
-    // ========================================================
-
     std::cout << "========== SYNTAX ANALYSIS ==========\n\n";
 
     try
     {
         Parser parser(tokens);
-
-        std::shared_ptr<Program> program =
-            parser.parse();
+        std::shared_ptr<Program> program = parser.parse();
 
         if (!program)
         {
@@ -103,58 +91,41 @@ int main()
         }
 
         std::cout << "AST generated successfully.\n";
-
         std::cout << "Total statements in AST: "
-                  << program->statements.size()
-                  << "\n";
-
+                  << program->statements.size() << "\n";
         std::cout << "PARSER: SUCCESS\n\n";
-
-        // ====================================================
-        // SEMANTIC ANALYSIS
-        // ====================================================
 
         std::cout << "========== SEMANTIC ANALYSIS ==========\n\n";
 
         SemanticAnalyzer semanticAnalyzer;
-
         semanticAnalyzer.analyze(program);
 
         if (semanticAnalyzer.hasErrors())
         {
             std::cout << "SEMANTIC ANALYSIS: FAILED\n\n";
-
             semanticAnalyzer.printErrors();
-
             return 1;
         }
 
         std::cout << "No semantic errors found.\n";
         std::cout << "SEMANTIC ANALYSIS: SUCCESS\n\n";
 
-        // ====================================================
-        // CODE GENERATION
-        // ====================================================
-
         std::cout << "========== CODE GENERATION ==========\n\n";
 
-        // Create output directory if it doesn't exist
         std::filesystem::create_directories("output");
 
         CodeGenerator codeGenerator;
-
-        std::string generatedCode =
-            codeGenerator.generate(program);
+        std::string generatedCode = codeGenerator.generate(program);
 
         std::cout << "Generated Python code:\n";
         std::cout << "----------------------------------------\n";
         std::cout << generatedCode;
         std::cout << "----------------------------------------\n\n";
 
-        bool saved =
-            codeGenerator.generateToFile(
-                program,
-                "output/output.py");
+        bool saved = codeGenerator.generateToFile(
+            program,
+            "output/output.py"
+        );
 
         if (!saved)
         {
@@ -162,24 +133,15 @@ int main()
             return 1;
         }
 
-        std::cout
-            << "Python code saved to: output/output.py\n";
-
-        std::cout
-            << "CODE GENERATION: SUCCESS\n\n";
+        std::cout << "Python code saved to: output/output.py\n";
+        std::cout << "CODE GENERATION: SUCCESS\n\n";
     }
     catch (const std::exception &e)
     {
         std::cout << "COMPILER ERROR: "
-                  << e.what()
-                  << "\n";
-
+                  << e.what() << "\n";
         return 1;
     }
-
-    // ========================================================
-    // COMPLETE SUCCESS
-    // ========================================================
 
     std::cout << "========================================\n";
     std::cout << "       COMPILATION SUCCESSFUL\n";
