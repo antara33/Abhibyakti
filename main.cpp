@@ -1,14 +1,26 @@
 #include <iostream>
 #include <windows.h>
 #include <vector>
+#include <memory>
+#include <filesystem>
+
+#ifdef VOID
+#undef VOID
+#endif
+
 #include "src/lexer.h"
+#include "src/parser.h"
+#include "src/semantic.h"
+#include "src/codegen.h"
 
-int main() {
-
+int main()
+{
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
-    std::cout << "========== BHASHA LEXER TEST ==========\n\n";
+    std::cout << "========================================\n";
+    std::cout << "        BHASHA COMPILER TEST\n";
+    std::cout << "========================================\n\n";
 
     std::string source = R"(
 সংখ্যা জমি = 5;
@@ -38,26 +50,140 @@ int main() {
 }
 )";
 
-    Lexer lexer(source);
-
-    std::vector<Token> tokens = lexer.tokenize();
+    // ========================================================
+    // SOURCE CODE
+    // ========================================================
 
     std::cout << "========== SOURCE CODE ==========\n\n";
     std::cout << source << "\n";
 
-    std::cout << "========== TOKENS ==========\n\n";
+    // ========================================================
+    // LEXICAL ANALYSIS
+    // ========================================================
 
-    for (const Token& token : tokens) {
+    std::cout << "========== LEXICAL ANALYSIS ==========\n\n";
 
+    Lexer lexer(source);
+
+    std::vector<Token> tokens = lexer.tokenize();
+
+    std::cout << "Total tokens generated: "
+              << tokens.size()
+              << "\n\n";
+
+    for (const Token &token : tokens)
+    {
         std::cout
             << "Lexeme: " << token.lexeme
             << " | Line: " << token.line
             << " | Token Type: "
             << tokenTypeToString(token.type)
-            << std::endl;
+            << '\n';
     }
 
-    std::cout << "\n========== LEXER TEST COMPLETE ==========\n";
+    std::cout << "\nLEXER: SUCCESS\n\n";
+
+    // ========================================================
+    // SYNTAX ANALYSIS
+    // ========================================================
+
+    std::cout << "========== SYNTAX ANALYSIS ==========\n\n";
+
+    try
+    {
+        Parser parser(tokens);
+
+        std::shared_ptr<Program> program =
+            parser.parse();
+
+        if (!program)
+        {
+            std::cout << "PARSER: FAILED\n";
+            return 1;
+        }
+
+        std::cout << "AST generated successfully.\n";
+
+        std::cout << "Total statements in AST: "
+                  << program->statements.size()
+                  << "\n";
+
+        std::cout << "PARSER: SUCCESS\n\n";
+
+        // ====================================================
+        // SEMANTIC ANALYSIS
+        // ====================================================
+
+        std::cout << "========== SEMANTIC ANALYSIS ==========\n\n";
+
+        SemanticAnalyzer semanticAnalyzer;
+
+        semanticAnalyzer.analyze(program);
+
+        if (semanticAnalyzer.hasErrors())
+        {
+            std::cout << "SEMANTIC ANALYSIS: FAILED\n\n";
+
+            semanticAnalyzer.printErrors();
+
+            return 1;
+        }
+
+        std::cout << "No semantic errors found.\n";
+        std::cout << "SEMANTIC ANALYSIS: SUCCESS\n\n";
+
+        // ====================================================
+        // CODE GENERATION
+        // ====================================================
+
+        std::cout << "========== CODE GENERATION ==========\n\n";
+
+        // Create output directory if it doesn't exist
+        std::filesystem::create_directories("output");
+
+        CodeGenerator codeGenerator;
+
+        std::string generatedCode =
+            codeGenerator.generate(program);
+
+        std::cout << "Generated Python code:\n";
+        std::cout << "----------------------------------------\n";
+        std::cout << generatedCode;
+        std::cout << "----------------------------------------\n\n";
+
+        bool saved =
+            codeGenerator.generateToFile(
+                program,
+                "output/output.py");
+
+        if (!saved)
+        {
+            std::cout << "CODE GENERATION: FAILED\n";
+            return 1;
+        }
+
+        std::cout
+            << "Python code saved to: output/output.py\n";
+
+        std::cout
+            << "CODE GENERATION: SUCCESS\n\n";
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << "COMPILER ERROR: "
+                  << e.what()
+                  << "\n";
+
+        return 1;
+    }
+
+    // ========================================================
+    // COMPLETE SUCCESS
+    // ========================================================
+
+    std::cout << "========================================\n";
+    std::cout << "       COMPILATION SUCCESSFUL\n";
+    std::cout << "========================================\n";
 
     return 0;
 }
