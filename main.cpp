@@ -1,9 +1,10 @@
-
 #include <iostream>
 #include <windows.h>
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 
 #ifdef VOID
 #undef VOID
@@ -14,16 +15,37 @@
 #include "src/semantic.h"
 #include "src/codegen.h"
 
-int main()
+int main(int argc, char *argv[])
 {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
     std::cout << "========================================\n";
-    std::cout << "        BHASHA COMPILER TEST\n";
+    std::cout << "        BHASHA COMPILER\n";
     std::cout << "========================================\n\n";
 
-    std::string source = R"(
+    std::string source;
+
+    if (argc > 1)
+    {
+        std::ifstream file(argv[1]);
+
+        if (!file)
+        {
+            std::cout << "Error: Could not open file: "
+                      << argv[1] << "\n";
+            return 1;
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        source = buffer.str();
+
+        std::cout << "Source file: " << argv[1] << "\n\n";
+    }
+    else
+    {
+        source = R"(
 সংখ্যা জমি = 5;
 সংখ্যা ধান = 100;
 
@@ -53,6 +75,9 @@ int main()
     দেখাও মোট;
 }
 )";
+
+        std::cout << "Using default Farmer's Crop Profit Calculator.\n\n";
+    }
 
     std::cout << "========== SOURCE CODE ==========\n\n";
     std::cout << source << "\n";
@@ -115,17 +140,19 @@ int main()
         std::filesystem::create_directories("output");
 
         CodeGenerator codeGenerator;
-        std::string generatedCode = codeGenerator.generate(program);
+
+        std::string generatedCode =
+            codeGenerator.generate(program);
 
         std::cout << "Generated Python code:\n";
         std::cout << "----------------------------------------\n";
         std::cout << generatedCode;
         std::cout << "----------------------------------------\n\n";
 
-        bool saved = codeGenerator.generateToFile(
-            program,
-            "output/output.py"
-        );
+        bool saved =
+            codeGenerator.generateToFile(
+                program,
+                "output/output.py");
 
         if (!saved)
         {
@@ -133,13 +160,17 @@ int main()
             return 1;
         }
 
-        std::cout << "Python code saved to: output/output.py\n";
-        std::cout << "CODE GENERATION: SUCCESS\n\n";
+        std::cout
+            << "Python code saved to: output/output.py\n";
+
+        std::cout
+            << "CODE GENERATION: SUCCESS\n\n";
     }
     catch (const std::exception &e)
     {
         std::cout << "COMPILER ERROR: "
                   << e.what() << "\n";
+
         return 1;
     }
 
