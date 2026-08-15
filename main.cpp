@@ -1,9 +1,10 @@
-
 #include <iostream>
 #include <windows.h>
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 
 #ifdef VOID
 #undef VOID
@@ -14,16 +15,162 @@
 #include "src/semantic.h"
 #include "src/codegen.h"
 
-int main()
+
+
+
+void printExpression(
+    const std::shared_ptr<Expression>& expr,
+    const std::string& indent = "")
+{
+    if (auto literal =
+            std::dynamic_pointer_cast<LiteralExpression>(expr))
+    {
+        std::cout << indent << "Literal: "
+                  << literal->value << "\n";
+    }
+    else if (auto variable =
+                 std::dynamic_pointer_cast<VariableExpression>(expr))
+    {
+        std::cout << indent << "Variable: "
+                  << variable->name << "\n";
+    }
+    else if (auto binary =
+                 std::dynamic_pointer_cast<BinaryExpression>(expr))
+    {
+        std::cout << indent << "Binary: "
+                  << binary->operatorSymbol << "\n";
+
+        printExpression(binary->left, indent + "  ");
+        printExpression(binary->right, indent + "  ");
+    }
+    else if (auto unary =
+                 std::dynamic_pointer_cast<UnaryExpression>(expr))
+    {
+        std::cout << indent << "Unary: "
+                  << unary->operatorSymbol << "\n";
+
+        printExpression(unary->operand, indent + "  ");
+    }
+}
+
+void printAST(
+    const std::shared_ptr<Program>& program)
+{
+    std::cout << "\n========== AST TREE ==========\n";
+
+    std::cout << "Program\n";
+
+    for (auto& statement : program->statements)
+    {
+        if (auto declaration =
+                std::dynamic_pointer_cast<DeclarationStatement>(statement))
+        {
+            std::cout << "  Declaration: "
+                      << declaration->variableName << "\n";
+
+            printExpression(
+                declaration->initializer,
+                "    ");
+        }
+
+        else if (auto assignment =
+                     std::dynamic_pointer_cast<AssignmentStatement>(statement))
+        {
+            std::cout << "  Assignment: "
+                      << assignment->variableName << "\n";
+
+            printExpression(
+                assignment->value,
+                "    ");
+        }
+
+        else if (auto print =
+                     std::dynamic_pointer_cast<PrintStatement>(statement))
+        {
+            std::cout << "  Print\n";
+
+            printExpression(
+                print->expression,
+                "    ");
+        }
+
+        else if (auto ifStatement =
+                     std::dynamic_pointer_cast<IfStatement>(statement))
+        {
+            std::cout << "  If\n";
+
+            std::cout << "    Condition\n";
+            printExpression(
+                ifStatement->condition,
+                "      ");
+
+            std::cout << "    Then\n";
+
+            for (auto& s : ifStatement->thenBranch->statements)
+            {
+                if (auto p =
+                        std::dynamic_pointer_cast<PrintStatement>(s))
+                {
+                    std::cout << "      Print\n";
+                    printExpression(
+                        p->expression,
+                        "        ");
+                }
+            }
+
+            if (ifStatement->elseBranch)
+            {
+                std::cout << "    Else\n";
+
+                for (auto& s : ifStatement->elseBranch->statements)
+                {
+                    if (auto p =
+                            std::dynamic_pointer_cast<PrintStatement>(s))
+                    {
+                        std::cout << "      Print\n";
+                        printExpression(
+                            p->expression,
+                            "        ");
+                    }
+                }
+            }
+        }
+    }
+
+    std::cout << "==============================\n\n";
+}
+
+int main(int argc, char *argv[])
 {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
     std::cout << "========================================\n";
-    std::cout << "        BHASHA COMPILER TEST\n";
+    std::cout << "        BHASHA COMPILER\n";
     std::cout << "========================================\n\n";
 
-    std::string source = R"(
+    std::string source;
+
+    if (argc > 1)
+    {
+        std::ifstream file(argv[1]);
+
+        if (!file)
+        {
+            std::cout << "Error: Could not open file: "
+                      << argv[1] << "\n";
+            return 1;
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        source = buffer.str();
+
+        std::cout << "Source file: " << argv[1] << "\n\n";
+    }
+    else
+    {
+        source = R"(
 সংখ্যা জমি = 5;
 সংখ্যা ধান = 100;
 
@@ -53,6 +200,9 @@ int main()
     দেখাও মোট;
 }
 )";
+
+        std::cout << "Using default Farmer's Crop Profit Calculator.\n\n";
+    }
 
     std::cout << "========== SOURCE CODE ==========\n\n";
     std::cout << source << "\n";
@@ -95,6 +245,8 @@ int main()
                   << program->statements.size() << "\n";
         std::cout << "PARSER: SUCCESS\n\n";
 
+        printAST(program);
+
         std::cout << "========== SEMANTIC ANALYSIS ==========\n\n";
 
         SemanticAnalyzer semanticAnalyzer;
@@ -115,17 +267,19 @@ int main()
         std::filesystem::create_directories("output");
 
         CodeGenerator codeGenerator;
-        std::string generatedCode = codeGenerator.generate(program);
+
+        std::string generatedCode =
+            codeGenerator.generate(program);
 
         std::cout << "Generated Python code:\n";
         std::cout << "----------------------------------------\n";
         std::cout << generatedCode;
         std::cout << "----------------------------------------\n\n";
 
-        bool saved = codeGenerator.generateToFile(
-            program,
-            "output/output.py"
-        );
+        bool saved =
+            codeGenerator.generateToFile(
+                program,
+                "output/output.py");
 
         if (!saved)
         {
@@ -133,13 +287,17 @@ int main()
             return 1;
         }
 
-        std::cout << "Python code saved to: output/output.py\n";
-        std::cout << "CODE GENERATION: SUCCESS\n\n";
+        std::cout
+            << "Python code saved to: output/output.py\n";
+
+        std::cout
+            << "CODE GENERATION: SUCCESS\n\n";
     }
     catch (const std::exception &e)
     {
         std::cout << "COMPILER ERROR: "
                   << e.what() << "\n";
+
         return 1;
     }
 

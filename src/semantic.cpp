@@ -2,10 +2,7 @@
 
 #include <iostream>
 
-// ============================================================
-// HELPER FUNCTION
-// Convert data type to readable text
-// ============================================================
+
 
 static std::string dataTypeToString(BhashaDataType type)
 {
@@ -44,9 +41,7 @@ static std::string dataTypeToString(BhashaDataType type)
     }
 }
 
-// ============================================================
-// NUMERIC TYPE CHECK
-// ============================================================
+
 
 static bool isNumericType(BhashaDataType type)
 {
@@ -56,9 +51,9 @@ static bool isNumericType(BhashaDataType type)
            type == BhashaDataType::POSITIVE;
 }
 
-// ============================================================
+
 // TYPE COMPATIBILITY
-// ============================================================
+
 
 static bool areTypesCompatible(
     BhashaDataType expected,
@@ -94,9 +89,9 @@ static bool areTypesCompatible(
     return false;
 }
 
-// ============================================================
+
 // ADD ERROR
-// ============================================================
+
 
 void SemanticAnalyzer::addError(
     const std::string& message)
@@ -104,9 +99,9 @@ void SemanticAnalyzer::addError(
     errors.push_back(message);
 }
 
-// ============================================================
+
 // ANALYZE COMPLETE PROGRAM
-// ============================================================
+
 
 void SemanticAnalyzer::analyze(
     const std::shared_ptr<Program>& program)
@@ -128,9 +123,9 @@ void SemanticAnalyzer::analyze(
     }
 }
 
-// ============================================================
+
 // ANALYZE STATEMENT
-// ============================================================
+
 
 void SemanticAnalyzer::analyzeStatement(
     const std::shared_ptr<Statement>& statement)
@@ -140,9 +135,9 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
+    
     // VARIABLE DECLARATION
-    // ========================================================
+   
 
     auto declaration =
         std::dynamic_pointer_cast<DeclarationStatement>(
@@ -200,9 +195,9 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
+    
     // ASSIGNMENT
-    // ========================================================
+   
 
     auto assignment =
         std::dynamic_pointer_cast<AssignmentStatement>(
@@ -254,9 +249,9 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
+    
     // PRINT STATEMENT
-    // ========================================================
+    
 
     auto print =
         std::dynamic_pointer_cast<PrintStatement>(
@@ -270,9 +265,9 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
+    
     // BLOCK STATEMENT
-    // ========================================================
+    
 
     auto block =
         std::dynamic_pointer_cast<BlockStatement>(
@@ -284,9 +279,7 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
-    // IF STATEMENT
-    // ========================================================
+
 
     auto ifStatement =
         std::dynamic_pointer_cast<IfStatement>(
@@ -325,9 +318,9 @@ void SemanticAnalyzer::analyzeStatement(
         return;
     }
 
-    // ========================================================
+   
     // WHILE STATEMENT
-    // ========================================================
+    
 
     auto whileStatement =
         std::dynamic_pointer_cast<WhileStatement>(
@@ -360,9 +353,9 @@ void SemanticAnalyzer::analyzeStatement(
     }
 }
 
-// ============================================================
+
 // ANALYZE BLOCK
-// ============================================================
+
 
 void SemanticAnalyzer::analyzeBlock(
     const std::shared_ptr<BlockStatement>& block)
@@ -379,9 +372,9 @@ void SemanticAnalyzer::analyzeBlock(
     }
 }
 
-// ============================================================
+
 // ANALYZE EXPRESSION
-// ============================================================
+
 
 BhashaDataType SemanticAnalyzer::analyzeExpression(
     const std::shared_ptr<Expression>& expression)
@@ -391,9 +384,9 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         return BhashaDataType::UNKNOWN;
     }
 
-    // ========================================================
+    
     // LITERAL
-    // ========================================================
+   
 
     auto literal =
         std::dynamic_pointer_cast<LiteralExpression>(
@@ -404,10 +397,9 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         return literal->dataType;
     }
 
-    // ========================================================
+   
     // VARIABLE
-    // ========================================================
-
+   
     auto variable =
         std::dynamic_pointer_cast<VariableExpression>(
             expression);
@@ -430,9 +422,9 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         return it->second;
     }
 
-    // ========================================================
+    
     // BINARY EXPRESSION
-    // ========================================================
+    
 
     auto binary =
         std::dynamic_pointer_cast<BinaryExpression>(
@@ -449,9 +441,8 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         const std::string& op =
             binary->operatorSymbol;
 
-        // ----------------------------------------------------
+        
         // ARITHMETIC OPERATORS
-        // ----------------------------------------------------
 
         if (op == "+" ||
             op == "-" ||
@@ -506,9 +497,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             return BhashaDataType::NUMBER;
         }
 
-        // ----------------------------------------------------
-        // COMPARISON OPERATORS
-        // ----------------------------------------------------
+        
 
         if (op == ">" ||
             op == "<" ||
@@ -528,10 +517,6 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
 
             return BhashaDataType::BOOLEAN;
         }
-
-        // ----------------------------------------------------
-        // EQUALITY OPERATORS
-        // ----------------------------------------------------
 
         if (op == "==" ||
             op == "!=")
@@ -561,10 +546,6 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
             return BhashaDataType::BOOLEAN;
         }
 
-        // ----------------------------------------------------
-        // LOGICAL OPERATORS
-        // ----------------------------------------------------
-
         if (op == "&&" ||
             op == "||")
         {
@@ -591,9 +572,7 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
         return BhashaDataType::UNKNOWN;
     }
 
-    // ========================================================
-    // UNARY EXPRESSION
-    // ========================================================
+
 
     auto unary =
         std::dynamic_pointer_cast<UnaryExpression>(
@@ -651,18 +630,18 @@ BhashaDataType SemanticAnalyzer::analyzeExpression(
     return BhashaDataType::UNKNOWN;
 }
 
-// ============================================================
+
 // HAS ERRORS
-// ============================================================
+
 
 bool SemanticAnalyzer::hasErrors() const
 {
     return !errors.empty();
 }
 
-// ============================================================
+
 // PRINT ERRORS
-// ============================================================
+
 
 void SemanticAnalyzer::printErrors() const
 {

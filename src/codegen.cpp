@@ -9,19 +9,19 @@ CodeGenerator::CodeGenerator()
 {
 }
 
-// ============================================================
+
 // INDENT
-// ============================================================
+
 
 std::string CodeGenerator::indent() const
 {
     return std::string(indentLevel * 4, ' ');
 }
 
-// ============================================================
+
 // EMIT
 // Add one line to generated Python code
-// ============================================================
+
 
 void CodeGenerator::emit(const std::string &line)
 {
@@ -30,9 +30,9 @@ void CodeGenerator::emit(const std::string &line)
     output << '\n';
 }
 
-// ============================================================
+
 // LITERAL
-// ============================================================
+
 
 std::string CodeGenerator::generateLiteral(
     const std::shared_ptr<LiteralExpression> &expression)
@@ -61,9 +61,7 @@ std::string CodeGenerator::generateLiteral(
     return expression->value;
 }
 
-// ============================================================
-// VARIABLE
-// ============================================================
+
 
 std::string CodeGenerator::generateVariable(
     const std::shared_ptr<VariableExpression> &expression)
@@ -76,9 +74,7 @@ std::string CodeGenerator::generateVariable(
     return expression->name;
 }
 
-// ============================================================
-// BINARY EXPRESSION
-// ============================================================
+
 
 std::string CodeGenerator::generateBinary(
     const std::shared_ptr<BinaryExpression> &expression)
@@ -110,9 +106,7 @@ std::string CodeGenerator::generateBinary(
     return "(" + left + " " + op + " " + right + ")";
 }
 
-// ============================================================
-// UNARY EXPRESSION
-// ============================================================
+
 
 std::string CodeGenerator::generateUnary(
     const std::shared_ptr<UnaryExpression> &expression)
@@ -137,9 +131,6 @@ std::string CodeGenerator::generateUnary(
     return "(" + op + operand + ")";
 }
 
-// ============================================================
-// GENERATE EXPRESSION
-// ============================================================
 
 std::string CodeGenerator::generateExpression(
     const std::shared_ptr<Expression> &expression)
@@ -181,9 +172,7 @@ std::string CodeGenerator::generateExpression(
         "Unknown expression type during code generation.");
 }
 
-// ============================================================
-// DECLARATION
-// ============================================================
+
 
 void CodeGenerator::generateDeclaration(
     const std::shared_ptr<DeclarationStatement> &statement)
@@ -202,9 +191,7 @@ void CodeGenerator::generateDeclaration(
         value);
 }
 
-// ============================================================
-// ASSIGNMENT
-// ============================================================
+
 
 void CodeGenerator::generateAssignment(
     const std::shared_ptr<AssignmentStatement> &statement)
@@ -223,9 +210,7 @@ void CodeGenerator::generateAssignment(
         value);
 }
 
-// ============================================================
-// PRINT
-// ============================================================
+
 
 void CodeGenerator::generatePrint(
     const std::shared_ptr<PrintStatement> &statement)
@@ -244,9 +229,7 @@ void CodeGenerator::generatePrint(
         ")");
 }
 
-// ============================================================
-// BLOCK
-// ============================================================
+
 
 void CodeGenerator::generateBlock(
     const std::shared_ptr<BlockStatement> &block)
@@ -266,9 +249,7 @@ void CodeGenerator::generateBlock(
     indentLevel--;
 }
 
-// ============================================================
-// IF
-// ============================================================
+
 
 void CodeGenerator::generateIf(
     const std::shared_ptr<IfStatement> &statement)
@@ -293,9 +274,6 @@ void CodeGenerator::generateIf(
     }
 }
 
-// ============================================================
-// WHILE
-// ============================================================
 
 void CodeGenerator::generateWhile(
     const std::shared_ptr<WhileStatement> &statement)
@@ -313,9 +291,7 @@ void CodeGenerator::generateWhile(
     generateBlock(statement->body);
 }
 
-// ============================================================
-// GENERATE STATEMENT
-// ============================================================
+
 
 void CodeGenerator::generateStatement(
     const std::shared_ptr<Statement> &statement)
@@ -377,9 +353,7 @@ void CodeGenerator::generateStatement(
         "Unknown statement type during code generation.");
 }
 
-// ============================================================
-// GENERATE PROGRAM
-// ============================================================
+
 
 std::string CodeGenerator::generate(
     const std::shared_ptr<Program> &program)
@@ -402,9 +376,7 @@ std::string CodeGenerator::generate(
     return output.str();
 }
 
-// ============================================================
-// GENERATE TO FILE
-// ============================================================
+
 
 bool CodeGenerator::generateToFile(
     const std::shared_ptr<Program> &program,
