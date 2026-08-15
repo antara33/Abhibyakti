@@ -15,6 +15,131 @@
 #include "src/semantic.h"
 #include "src/codegen.h"
 
+
+
+
+void printExpression(
+    const std::shared_ptr<Expression>& expr,
+    const std::string& indent = "")
+{
+    if (auto literal =
+            std::dynamic_pointer_cast<LiteralExpression>(expr))
+    {
+        std::cout << indent << "Literal: "
+                  << literal->value << "\n";
+    }
+    else if (auto variable =
+                 std::dynamic_pointer_cast<VariableExpression>(expr))
+    {
+        std::cout << indent << "Variable: "
+                  << variable->name << "\n";
+    }
+    else if (auto binary =
+                 std::dynamic_pointer_cast<BinaryExpression>(expr))
+    {
+        std::cout << indent << "Binary: "
+                  << binary->operatorSymbol << "\n";
+
+        printExpression(binary->left, indent + "  ");
+        printExpression(binary->right, indent + "  ");
+    }
+    else if (auto unary =
+                 std::dynamic_pointer_cast<UnaryExpression>(expr))
+    {
+        std::cout << indent << "Unary: "
+                  << unary->operatorSymbol << "\n";
+
+        printExpression(unary->operand, indent + "  ");
+    }
+}
+
+void printAST(
+    const std::shared_ptr<Program>& program)
+{
+    std::cout << "\n========== AST TREE ==========\n";
+
+    std::cout << "Program\n";
+
+    for (auto& statement : program->statements)
+    {
+        if (auto declaration =
+                std::dynamic_pointer_cast<DeclarationStatement>(statement))
+        {
+            std::cout << "  Declaration: "
+                      << declaration->variableName << "\n";
+
+            printExpression(
+                declaration->initializer,
+                "    ");
+        }
+
+        else if (auto assignment =
+                     std::dynamic_pointer_cast<AssignmentStatement>(statement))
+        {
+            std::cout << "  Assignment: "
+                      << assignment->variableName << "\n";
+
+            printExpression(
+                assignment->value,
+                "    ");
+        }
+
+        else if (auto print =
+                     std::dynamic_pointer_cast<PrintStatement>(statement))
+        {
+            std::cout << "  Print\n";
+
+            printExpression(
+                print->expression,
+                "    ");
+        }
+
+        else if (auto ifStatement =
+                     std::dynamic_pointer_cast<IfStatement>(statement))
+        {
+            std::cout << "  If\n";
+
+            std::cout << "    Condition\n";
+            printExpression(
+                ifStatement->condition,
+                "      ");
+
+            std::cout << "    Then\n";
+
+            for (auto& s : ifStatement->thenBranch->statements)
+            {
+                if (auto p =
+                        std::dynamic_pointer_cast<PrintStatement>(s))
+                {
+                    std::cout << "      Print\n";
+                    printExpression(
+                        p->expression,
+                        "        ");
+                }
+            }
+
+            if (ifStatement->elseBranch)
+            {
+                std::cout << "    Else\n";
+
+                for (auto& s : ifStatement->elseBranch->statements)
+                {
+                    if (auto p =
+                            std::dynamic_pointer_cast<PrintStatement>(s))
+                    {
+                        std::cout << "      Print\n";
+                        printExpression(
+                            p->expression,
+                            "        ");
+                    }
+                }
+            }
+        }
+    }
+
+    std::cout << "==============================\n\n";
+}
+
 int main(int argc, char *argv[])
 {
     SetConsoleOutputCP(CP_UTF8);
@@ -119,6 +244,8 @@ int main(int argc, char *argv[])
         std::cout << "Total statements in AST: "
                   << program->statements.size() << "\n";
         std::cout << "PARSER: SUCCESS\n\n";
+
+        printAST(program);
 
         std::cout << "========== SEMANTIC ANALYSIS ==========\n\n";
 

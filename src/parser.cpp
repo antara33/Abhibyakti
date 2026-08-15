@@ -114,9 +114,7 @@ void Parser::synchronize()
     }
 }
 
-// ============================================================
-// MAIN PARSE FUNCTION
-// ============================================================
+
 
 std::shared_ptr<Program> Parser::parse()
 {
@@ -143,9 +141,6 @@ std::shared_ptr<Program> Parser::parse()
         std::move(statements));
 }
 
-// ============================================================
-// STATEMENT PARSING
-// ============================================================
 
 std::shared_ptr<Statement> Parser::parseStatement()
 {
@@ -201,14 +196,7 @@ std::shared_ptr<Statement> Parser::parseStatement()
     return nullptr;
 }
 
-// ============================================================
-// VARIABLE DECLARATION
-//
-// Example:
-//
-// সংখ্যা x = 10;
-// দশমিক price = 5.5;
-// ============================================================
+
 
 std::shared_ptr<Statement> Parser::parseDeclaration()
 {
@@ -238,14 +226,7 @@ std::shared_ptr<Statement> Parser::parseDeclaration()
         initializer);
 }
 
-// ============================================================
-// ASSIGNMENT
-//
-// Example:
-//
-// x = 20;
-// x = x + 5;
-// ============================================================
+
 
 std::shared_ptr<Statement> Parser::parseAssignment()
 {
@@ -266,24 +247,11 @@ std::shared_ptr<Statement> Parser::parseAssignment()
         value);
 }
 
-// ============================================================
-// PRINT
-//
-// Example:
-//
-// দেখাও(x);
-// দেখাও(x + 5);
-// ============================================================
+
 
 std::shared_ptr<Statement> Parser::parsePrint()
 {
-    // Support both:
-    //
-    // দেখাও(x);
-    //
-    // and
-    //
-    // দেখাও x;
+   
 
     bool hasParentheses =
         match(BhashaTokenType::LEFT_PAREN);
@@ -305,15 +273,7 @@ std::shared_ptr<Statement> Parser::parsePrint()
         expression);
 }
 
-// ============================================================
-// IF
-//
-// Example:
-//
-// যদি (x > 10) {
-//     দেখাও(x);
-// }
-// ============================================================
+
 
 std::shared_ptr<Statement> Parser::parseIf()
 {
@@ -350,15 +310,7 @@ std::shared_ptr<Statement> Parser::parseIf()
         elseBranch);
 }
 
-// ============================================================
-// WHILE
-//
-// Example:
-//
-// যতক্ষণ (x < 10) {
-//     x = x + 1;
-// }
-// ============================================================
+
 
 std::shared_ptr<Statement> Parser::parseWhile()
 {
@@ -383,16 +335,7 @@ std::shared_ptr<Statement> Parser::parseWhile()
         body);
 }
 
-// ============================================================
-// BLOCK
-//
-// Example:
-//
-// {
-//     x = x + 1;
-//     দেখাও(x);
-// }
-// ============================================================
+
 
 std::shared_ptr<BlockStatement> Parser::parseBlock()
 {
@@ -418,20 +361,14 @@ std::shared_ptr<BlockStatement> Parser::parseBlock()
         std::move(statements));
 }
 
-// ============================================================
-// EXPRESSION
-// ============================================================
 
+// EXPRESSION
 std::shared_ptr<Expression> Parser::parseExpression()
 {
     return parseOr();
 }
 
-// ============================================================
-// LOGICAL OR
-//
-// x || y
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parseOr()
 {
@@ -451,11 +388,6 @@ std::shared_ptr<Expression> Parser::parseOr()
     return expression;
 }
 
-// ============================================================
-// LOGICAL AND
-//
-// x && y
-// ============================================================
 
 std::shared_ptr<Expression> Parser::parseAnd()
 {
@@ -475,11 +407,6 @@ std::shared_ptr<Expression> Parser::parseAnd()
     return expression;
 }
 
-// ============================================================
-// EQUALITY
-//
-// == !=
-// ============================================================
 
 std::shared_ptr<Expression> Parser::parseEquality()
 {
@@ -513,11 +440,7 @@ std::shared_ptr<Expression> Parser::parseEquality()
     return expression;
 }
 
-// ============================================================
-// COMPARISON
-//
-// > < >= <=
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parseComparison()
 {
@@ -561,13 +484,7 @@ std::shared_ptr<Expression> Parser::parseComparison()
     return expression;
 }
 
-// ============================================================
-// TERM
-//
-// + -
-//
-// x + 5 - 2
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parseTerm()
 {
@@ -601,22 +518,7 @@ std::shared_ptr<Expression> Parser::parseTerm()
     return expression;
 }
 
-// ============================================================
-// FACTOR
-//
-// * / %
-//
-// x + 5 * 2
-//
-// AST:
-//
-//       +
-//      / \
-//     x   *
-//        / \
-//       5   2
-//
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parseFactor()
 {
@@ -655,13 +557,7 @@ std::shared_ptr<Expression> Parser::parseFactor()
     return expression;
 }
 
-// ============================================================
-// UNARY
-//
-// -x
-// +x
-// !x
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parseUnary()
 {
@@ -695,13 +591,7 @@ std::shared_ptr<Expression> Parser::parseUnary()
     return parsePrimary();
 }
 
-// ============================================================
-// PRIMARY
-//
-// Literals
-// Variables
-// Parenthesized expressions
-// ============================================================
+
 
 std::shared_ptr<Expression> Parser::parsePrimary()
 {
@@ -785,9 +675,7 @@ std::shared_ptr<Expression> Parser::parsePrimary()
         BhashaDataType::NUMBER);
 }
 
-// ============================================================
-// DATA TYPE CONVERSION
-// ============================================================
+
 
 BhashaDataType Parser::tokenToDataType(
     BhashaTokenType type) const
