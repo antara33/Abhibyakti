@@ -2,18 +2,16 @@
 
 #include <iostream>
 
-// ============================================================
+
 // CONSTRUCTOR
-// ============================================================
+
 
 Parser::Parser(const std::vector<Token> &tokens)
     : tokens(tokens), current(0)
 {
 }
 
-// ============================================================
-// BASIC TOKEN OPERATIONS
-// ============================================================
+
 
 const Token &Parser::peek() const
 {
@@ -61,9 +59,6 @@ bool Parser::match(BhashaTokenType type)
     return true;
 }
 
-// ============================================================
-// ERROR HANDLING
-// ============================================================
 
 const Token &Parser::consume(
     BhashaTokenType type,

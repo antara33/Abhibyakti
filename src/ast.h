@@ -6,9 +6,8 @@
 #include <vector>
 #include <utility>
 
-// ============================================================
 // BHASHA DATA TYPES
-// ============================================================
+
 
 enum class BhashaDataType
 {
@@ -24,9 +23,9 @@ enum class BhashaDataType
     UNKNOWN
 };
 
-// ============================================================
+
 // BASE AST NODE
-// ============================================================
+
 
 class ASTNode
 {
@@ -34,9 +33,9 @@ public:
     virtual ~ASTNode() = default;
 };
 
-// ============================================================
+
 // EXPRESSION BASE CLASS
-// ============================================================
+
 
 class Expression : public ASTNode
 {
@@ -44,9 +43,9 @@ public:
     virtual ~Expression() = default;
 };
 
-// ============================================================
+
 // STATEMENT BASE CLASS
-// ============================================================
+
 
 class Statement : public ASTNode
 {
@@ -54,17 +53,7 @@ public:
     virtual ~Statement() = default;
 };
 
-// ============================================================
-// LITERAL EXPRESSION
-//
-// Examples:
-//     10
-//     3.5
-//     "hello"
-//     'A'
-//     সত্য
-//     মিথ্যা
-// ============================================================
+
 
 class LiteralExpression : public Expression
 {
@@ -79,14 +68,7 @@ public:
           dataType(dataType) {}
 };
 
-// ============================================================
-// VARIABLE EXPRESSION
-//
-// Examples:
-//     x
-//     total
-//     price
-// ============================================================
+
 
 class VariableExpression : public Expression
 {
@@ -97,25 +79,7 @@ public:
         : name(name) {}
 };
 
-// ============================================================
-// BINARY EXPRESSION
-//
-// Examples:
-//     x + y
-//     x - y
-//     x * y
-//     x / y
-//     x % y
-//     x > y
-//     x == y
-//     x && y
-//
-// Tree example:
-//
-//          +
-//         / \
-//        x   y
-// ============================================================
+
 
 class BinaryExpression : public Expression
 {
@@ -133,20 +97,7 @@ public:
           right(std::move(right)) {}
 };
 
-// ============================================================
-// UNARY EXPRESSION
-//
-// Examples:
-//     -x
-//     +x
-//     !x
-//
-// Tree:
-//
-//        !
-//        |
-//        x
-// ============================================================
+
 
 class UnaryExpression : public Expression
 {
@@ -161,15 +112,7 @@ public:
           operand(std::move(operand)) {}
 };
 
-// ============================================================
-// VARIABLE DECLARATION
-//
-// Examples:
-//
-//     সংখ্যা x = 10;
-//     দশমিক price = 25.5;
-//
-// ============================================================
+
 
 class DeclarationStatement : public Statement
 {
@@ -187,15 +130,7 @@ public:
           initializer(std::move(initializer)) {}
 };
 
-// ============================================================
-// ASSIGNMENT STATEMENT
-//
-// Examples:
-//
-//     x = 20;
-//     x = x + 5;
-//
-// ============================================================
+
 
 class AssignmentStatement : public Statement
 {
@@ -210,15 +145,7 @@ public:
           value(std::move(value)) {}
 };
 
-// ============================================================
-// PRINT STATEMENT
-//
-// Examples:
-//
-//     দেখাও(x);
-//     দেখাও(x + y);
-//
-// ============================================================
+
 
 class PrintStatement : public Statement
 {
@@ -230,17 +157,7 @@ public:
         : expression(std::move(expression)) {}
 };
 
-// ============================================================
-// BLOCK STATEMENT
-//
-// Example:
-//
-//     {
-//         x = x + 1;
-//         দেখাও(x);
-//     }
-//
-// ============================================================
+
 
 class BlockStatement : public Statement
 {
@@ -254,16 +171,7 @@ public:
         : statements(std::move(statements)) {}
 };
 
-// ============================================================
-// IF STATEMENT
-//
-// Example:
-//
-//     যদি (x > 10) {
-//         দেখাও(x);
-//     }
-//
-// ============================================================
+
 
 class IfStatement : public Statement
 {
@@ -283,16 +191,7 @@ public:
           elseBranch(std::move(elseBranch)) {}
 };
 
-// ============================================================
-// WHILE STATEMENT
-//
-// Example:
-//
-//     যতক্ষণ (x < 10) {
-//         x = x + 1;
-//     }
-//
-// ============================================================
+
 
 class WhileStatement : public Statement
 {
@@ -308,26 +207,7 @@ public:
           body(std::move(body)) {}
 };
 
-// ============================================================
-// PROGRAM
-//
-// Root node of the entire AST.
-//
-// Example:
-//
-//     সংখ্যা x = 10;
-//     x = x + 5;
-//     দেখাও(x);
-//
-// AST:
-//
-// Program
-//   |
-//   ├── Declaration
-//   ├── Assignment
-//   └── Print
-//
-// ============================================================
+
 
 class Program : public ASTNode
 {

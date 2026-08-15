@@ -13,18 +13,15 @@ private:
     std::stringstream output;
     int indentLevel;
 
-    // ========================================================
-    // INDENTATION
-    // ========================================================
+
 
     std::string indent() const;
 
     // Add one line to generated Python code
     void emit(const std::string &line);
 
-    // ========================================================
     // EXPRESSION GENERATION
-    // ========================================================
+    
 
     std::string generateExpression(
         const std::shared_ptr<Expression> &expression);
@@ -41,9 +38,9 @@ private:
     std::string generateUnary(
         const std::shared_ptr<UnaryExpression> &expression);
 
-    // ========================================================
+  
     // STATEMENT GENERATION
-    // ========================================================
+  
 
     void generateStatement(
         const std::shared_ptr<Statement> &statement);

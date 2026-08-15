@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-// ============================================================
+
 // SEMANTIC ANALYZER TEST
-// ============================================================
+
 
 int main()
 {
@@ -14,14 +14,7 @@ int main()
     std::cout << "     SEMANTIC ANALYSIS TEST\n";
     std::cout << "====================================\n\n";
 
-    // ========================================================
-    // TEST 1: VALID PROGRAM
-    //
-    // সংখ্যা x = 10;
-    // দশমিক y = 5.5;
-    // x = x + 5;
-    // দেখাও(x);
-    // ========================================================
+
 
     std::cout << "TEST 1: Valid Program\n";
     std::cout << "------------------------------------\n";
@@ -85,13 +78,7 @@ int main()
         std::cout << "PASSED: No semantic errors found.\n";
     }
 
-    // ========================================================
-    // TEST 2: UNDECLARED VARIABLE
-    //
-    // x = 10;
-    //
-    // x was never declared.
-    // ========================================================
+  
 
     std::cout << "\n";
     std::cout << "TEST 2: Undeclared Variable\n";
@@ -121,13 +108,7 @@ int main()
         std::cout << "FAILED: Undeclared variable was not detected.\n";
     }
 
-    // ========================================================
-    // TEST 3: TYPE MISMATCH
-    //
-    // সংখ্যা x = 5.5;
-    //
-    // NUMBER variable cannot receive DECIMAL.
-    // ========================================================
+ 
 
     std::cout << "\n";
     std::cout << "TEST 3: Type Mismatch\n";
@@ -158,14 +139,7 @@ int main()
         std::cout << "FAILED: Type mismatch was not detected.\n";
     }
 
-    // ========================================================
-    // TEST 4: DUPLICATE VARIABLE
-    //
-    // সংখ্যা x = 10;
-    // সংখ্যা x = 20;
-    //
-    // Same variable declared twice.
-    // ========================================================
+    
 
     std::cout << "\n";
     std::cout << "TEST 4: Duplicate Declaration\n";
@@ -204,13 +178,7 @@ int main()
         std::cout << "FAILED: Duplicate declaration was not detected.\n";
     }
 
-    // ========================================================
-    // TEST 5: INVALID IF CONDITION
-    //
-    // যদি (10) { ... }
-    //
-    // IF condition must be BOOLEAN.
-    // ========================================================
+
 
     std::cout << "\n";
     std::cout << "TEST 5: Invalid IF Condition\n";
@@ -249,13 +217,7 @@ int main()
         std::cout << "FAILED: Invalid IF condition was not detected.\n";
     }
 
-    // ========================================================
-    // TEST 6: INVALID LOGICAL OPERATOR
-    //
-    // 10 && 20
-    //
-    // && requires BOOLEAN operands.
-    // ========================================================
+    
 
     std::cout << "\n";
     std::cout << "TEST 6: Invalid Logical Operation\n";
@@ -292,9 +254,9 @@ int main()
         std::cout << "FAILED: Invalid logical operation was not detected.\n";
     }
 
-    // ========================================================
+   
     // TEST COMPLETE
-    // ========================================================
+  
 
     std::cout << "\n";
     std::cout << "====================================\n";
