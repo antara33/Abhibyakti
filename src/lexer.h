@@ -15,10 +15,15 @@ private:
     size_t current;
     int line;
 
-  std::unordered_map<std::string, AbhibyaktiTokenType> keywords;
+    std::unordered_map<std::string, AbhibyaktiTokenType> keywords;
+
     void scanToken();
     void number();
     void identifier();
+
+    // Bangla digit helper functions
+    bool isBanglaDigitAt(size_t position) const;
+    int banglaDigitValueAt(size_t position) const;
 
 public:
     Lexer(const std::string& source);

@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
 }
 )";
 
-        std::cout << "Using default Farmer's Crop Profit Calculator.\n\n";
+        std::cout << "Using  Farmer's Crop Profit Calculator.\n\n";
     }
 
     std::cout << "========== SOURCE CODE ==========\n\n";

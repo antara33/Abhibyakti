@@ -1,7 +1,7 @@
 # Abhibyakti Programming Language
 ## Language Specification
 
-Project: Bangla Programming Language Compiler  
+Project: Abhibyakti Programming Language Compiler
 Course: Compiler Design  
 Implementation Language: C++  
 Target Language: Python  
