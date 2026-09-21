@@ -52,6 +52,35 @@ static bool isNumericType(AbhibyaktiDataType type)
 }
 
 
+static bool isZeroLiteral(
+    const std::shared_ptr<Expression>& expression)
+{
+    auto literal =
+        std::dynamic_pointer_cast<LiteralExpression>(
+            expression);
+
+    if (!literal)
+    {
+        return false;
+    }
+
+    if (!isNumericType(literal->dataType))
+    {
+        return false;
+    }
+
+    try
+    {
+        return std::stod(literal->value) == 0.0;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+
+
 // TYPE COMPATIBILITY
 
 
@@ -480,16 +509,21 @@ AbhibyaktiDataType SemanticAnalyzer::analyzeExpression(
 
                 return AbhibyaktiDataType::UNKNOWN;
             }
+            // Division by zero check
+if (op == "/" &&
+    isZeroLiteral(binary->right))
+{
+    addError(
+        "Division by zero.");
 
+    return AbhibyaktiDataType::UNKNOWN;
+}
 
-           // Division by zero check
-           if (op == "/" &&
-            isZeroLiteral(binary->right))
-            {
-                addError(
-                    "Division by zero.");
-                    return AbhibyaktiDataType::UNKNOWN;
-                }
+// Division produces DECIMAL
+if (op == "/")
+{
+    return AbhibyaktiDataType::DECIMAL;
+}
 
 // Division produces DECIMAL
 if (op == "/")
