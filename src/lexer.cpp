@@ -4,25 +4,58 @@ Lexer::Lexer(const std::string& source)
     : source(source), start(0), current(0), line(1) {
 
     // Data type keywords
-    keywords["সংখ্যা"] = BhashaTokenType::NUMBER_TYPE;
-    keywords["দশমিক"] = BhashaTokenType::DECIMAL_TYPE;
-    keywords["লেখা"] = BhashaTokenType::STRING_TYPE;
-    keywords["চরিত্র"] = BhashaTokenType::CHAR_TYPE;
-    keywords["সত্যমিথ্যা"] = BhashaTokenType::BOOLEAN_TYPE;
-    keywords["তালিকা"] = BhashaTokenType::LIST_TYPE;
-    keywords["দীর্ঘসংখ্যা"] = BhashaTokenType::LONG_TYPE;
-    keywords["ধনাত্মক"] = BhashaTokenType::POSITIVE_TYPE;
-    keywords["শূন্য"] = BhashaTokenType::VOID_TYPE;
+    keywords["সংখ্যা"] = AbhibyaktiTokenType::NUMBER_TYPE;
+    keywords["দশমিক"] = AbhibyaktiTokenType::DECIMAL_TYPE;
+    keywords["লেখা"] = AbhibyaktiTokenType::STRING_TYPE;
+    keywords["চরিত্র"] = AbhibyaktiTokenType::CHAR_TYPE;
+    keywords["সত্যমিথ্যা"] = AbhibyaktiTokenType::BOOLEAN_TYPE;
+    keywords["তালিকা"] = AbhibyaktiTokenType::LIST_TYPE;
+    keywords["দীর্ঘসংখ্যা"] = AbhibyaktiTokenType::LONG_TYPE;
+    keywords["ধনাত্মক"] = AbhibyaktiTokenType::POSITIVE_TYPE;
+    keywords["শূন্য"] = AbhibyaktiTokenType::VOID_TYPE;
 
     // Control keywords
-    keywords["যদি"] = BhashaTokenType::IF;
-    keywords["নাহলে"] = BhashaTokenType::ELSE;
-    keywords["যতক্ষণ"] = BhashaTokenType::WHILE;
-    keywords["দেখাও"] = BhashaTokenType::PRINT;
+    keywords["যদি"] = AbhibyaktiTokenType::IF;
+    keywords["নাহলে"] = AbhibyaktiTokenType::ELSE;
+    keywords["যতক্ষণ"] = AbhibyaktiTokenType::WHILE;
+    keywords["দেখাও"] = AbhibyaktiTokenType::PRINT;
 
     // Boolean keywords
-    keywords["সত্য"] = BhashaTokenType::BOOLEAN_TRUE;
-    keywords["মিথ্যা"] = BhashaTokenType::BOOLEAN_FALSE;
+    keywords["সত্য"] = AbhibyaktiTokenType::BOOLEAN_TRUE;
+    keywords["মিথ্যা"] = AbhibyaktiTokenType::BOOLEAN_FALSE;
+}
+
+
+// Check whether a Bangla digit starts at the given byte position.
+bool Lexer::isBanglaDigitAt(size_t position) const {
+
+    if (position + 2 >= source.length()) {
+        return false;
+    }
+
+    unsigned char b1 = static_cast<unsigned char>(source[position]);
+    unsigned char b2 = static_cast<unsigned char>(source[position + 1]);
+    unsigned char b3 = static_cast<unsigned char>(source[position + 2]);
+
+    // UTF-8 range for Bangla digits: ০ - ৯
+    return b1 == 0xE0 &&
+           b2 == 0xA7 &&
+           b3 >= 0xA6 &&
+           b3 <= 0xAF;
+}
+
+
+// Convert a Bangla digit into its numeric value.
+int Lexer::banglaDigitValueAt(size_t position) const {
+
+    if (!isBanglaDigitAt(position)) {
+        return -1;
+    }
+
+    unsigned char b3 =
+        static_cast<unsigned char>(source[position + 2]);
+
+    return b3 - 0xA6;
 }
 
 
@@ -37,7 +70,7 @@ std::vector<Token> Lexer::tokenize() {
 
     // End of file token
     tokens.push_back(
-        Token(BhashaTokenType::END_OF_FILE, "", line)
+        Token(AbhibyaktiTokenType::END_OF_FILE, "", line)
     );
 
     return tokens;
@@ -49,48 +82,113 @@ void Lexer::number() {
 
     bool isDecimal = false;
 
+    std::string value;
+
     // Read integer part
-    while (current < source.length() &&
-           source[current] >= '0' &&
-           source[current] <= '9') {
+    while (current < source.length()) {
 
-        current++;
-    }
+        // ASCII digit
+        if (source[current] >= '0' &&
+            source[current] <= '9') {
 
-    // Check decimal point
-    if (current < source.length() &&
-        source[current] == '.' &&
-        current + 1 < source.length() &&
-        source[current + 1] >= '0' &&
-        source[current + 1] <= '9') {
-
-        isDecimal = true;
-        current++;
-
-        // Read decimal part
-        while (current < source.length() &&
-               source[current] >= '0' &&
-               source[current] <= '9') {
-
+            value += source[current];
             current++;
+        }
+
+        // Bangla digit
+        else if (isBanglaDigitAt(current)) {
+
+            int digit = banglaDigitValueAt(current);
+
+            value += static_cast<char>('0' + digit);
+
+            current += 3;
+        }
+
+        else {
+            break;
         }
     }
 
-    // Extract number
-    std::string value =
-        source.substr(start, current - start);
+
+    // Check decimal point
+    if (current < source.length() &&
+        source[current] == '.') {
+
+        size_t next = current + 1;
+
+        bool nextIsDigit = false;
+
+        // ASCII digit after decimal point
+        if (next < source.length() &&
+            source[next] >= '0' &&
+            source[next] <= '9') {
+
+            nextIsDigit = true;
+        }
+
+        // Bangla digit after decimal point
+        else if (isBanglaDigitAt(next)) {
+
+            nextIsDigit = true;
+        }
+
+
+        if (nextIsDigit) {
+
+            isDecimal = true;
+
+            value += '.';
+            current++;
+
+            // Read decimal part
+            while (current < source.length()) {
+
+                // ASCII digit
+                if (source[current] >= '0' &&
+                    source[current] <= '9') {
+
+                    value += source[current];
+                    current++;
+                }
+
+                // Bangla digit
+                else if (isBanglaDigitAt(current)) {
+
+                    int digit = banglaDigitValueAt(current);
+
+                    value += static_cast<char>('0' + digit);
+
+                    current += 3;
+                }
+
+                else {
+                    break;
+                }
+            }
+        }
+    }
+
 
     // Create token
     if (isDecimal) {
 
         tokens.push_back(
-            Token(BhashaTokenType::DECIMAL, value, line)
+            Token(
+                AbhibyaktiTokenType::DECIMAL,
+                value,
+                line
+            )
         );
 
     } else {
 
         tokens.push_back(
-            Token(BhashaTokenType::INTEGER, value, line)
+            Token(
+                AbhibyaktiTokenType::INTEGER,
+                value,
+                line
+            )
         );
     }
 }
@@ -101,7 +199,8 @@ void Lexer::identifier() {
 
     while (current < source.length()) {
 
-        unsigned char c = source[current];
+        unsigned char c =
+            static_cast<unsigned char>(source[current]);
 
         // English letters, digits and underscore
         if ((c >= 'a' && c <= 'z') ||
@@ -140,7 +239,11 @@ void Lexer::identifier() {
     } else {
 
         tokens.push_back(
-            Token(BhashaTokenType::IDENTIFIER, text, line)
+            Token(
+                AbhibyaktiTokenType::IDENTIFIER,
+                text,
+                line
+            )
         );
     }
 }
@@ -157,39 +260,110 @@ void Lexer::scanToken() {
         case '+':
 
             tokens.push_back(
-                Token(BhashaTokenType::PLUS, "+", line)
+                Token(
+                    AbhibyaktiTokenType::PLUS,
+                    "+",
+                    line
+                )
             );
 
             break;
+
 
         case '-':
 
             tokens.push_back(
-                Token(BhashaTokenType::MINUS, "-", line)
+                Token(
+                    AbhibyaktiTokenType::MINUS,
+                    "-",
+                    line
+                )
             );
 
             break;
+
 
         case '*':
 
             tokens.push_back(
-                Token(BhashaTokenType::MULTIPLY, "*", line)
+                Token(
+                    AbhibyaktiTokenType::MULTIPLY,
+                    "*",
+                    line
+                )
             );
 
             break;
+
 
         case '/':
 
-            tokens.push_back(
-                Token(BhashaTokenType::DIVIDE, "/", line)
-            );
+            // Check for single-line comment
+            if (current < source.length() &&
+                source[current] == '/') {
+
+                current++;
+
+                // Skip until end of line
+                while (current < source.length() &&
+                       source[current] != '\n') {
+
+                    current++;
+                }
+
+            }
+
+            // Check for multi-line comment
+            else if (current < source.length() &&
+                     source[current] == '*') {
+
+                current++;
+
+                // Skip until */
+                while (current < source.length()) {
+
+                    // Check for closing comment
+                    if (source[current] == '*' &&
+                        current + 1 < source.length() &&
+                        source[current + 1] == '/') {
+
+                        current += 2;
+                        break;
+                    }
+
+                    // Track new lines inside comment
+                    if (source[current] == '\n') {
+                        line++;
+                    }
+
+                    current++;
+                }
+
+            }
+
+            // Normal division operator
+            else {
+
+                tokens.push_back(
+                    Token(
+                        AbhibyaktiTokenType::DIVIDE,
+                        "/",
+                        line
+                    )
+                );
+            }
 
             break;
+
 
         case '%':
 
             tokens.push_back(
-                Token(BhashaTokenType::MODULO, "%", line)
+                Token(
+                    AbhibyaktiTokenType::MODULO,
+                    "%",
+                    line
+                )
             );
 
             break;
@@ -204,13 +378,21 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::EQUAL_EQUAL, "==", line)
+                    Token(
+                        AbhibyaktiTokenType::EQUAL_EQUAL,
+                        "==",
+                        line
+                    )
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::ASSIGN, "=", line)
+                    Token(
+                        AbhibyaktiTokenType::ASSIGN,
+                        "=",
+                        line
+                    )
                 );
             }
 
@@ -226,13 +408,21 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::GREATER_EQUAL, ">=", line)
+                    Token(
+                        AbhibyaktiTokenType::GREATER_EQUAL,
+                        ">=",
+                        line
+                    )
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::GREATER, ">", line)
+                    Token(
+                        AbhibyaktiTokenType::GREATER,
+                        ">",
+                        line
+                    )
                 );
             }
 
@@ -248,13 +438,21 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::LESS_EQUAL, "<=", line)
+                    Token(
+                        AbhibyaktiTokenType::LESS_EQUAL,
+                        "<=",
+                        line
+                    )
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::LESS, "<", line)
+                    Token(
+                        AbhibyaktiTokenType::LESS,
+                        "<",
+                        line
+                    )
                 );
             }
 
@@ -270,13 +468,21 @@ void Lexer::scanToken() {
                 current++;
 
                 tokens.push_back(
-                    Token(BhashaTokenType::NOT_EQUAL, "!=", line)
+                    Token(
+                        AbhibyaktiTokenType::NOT_EQUAL,
+                        "!=",
+                        line
+                    )
                 );
 
             } else {
 
                 tokens.push_back(
-                    Token(BhashaTokenType::NOT, "!", line)
+                    Token(
+                        AbhibyaktiTokenType::NOT,
+                        "!",
+                        line
+                    )
                 );
             }
 
@@ -287,15 +493,24 @@ void Lexer::scanToken() {
         case '(':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_PAREN, "(", line)
+                Token(
+                    AbhibyaktiTokenType::LEFT_PAREN,
+                    "(",
+                    line
+                )
             );
 
             break;
 
+
         case ')':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_PAREN, ")", line)
+                Token(
+                    AbhibyaktiTokenType::RIGHT_PAREN,
+                    ")",
+                    line
+                )
             );
 
             break;
@@ -305,15 +520,24 @@ void Lexer::scanToken() {
         case '{':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_BRACE, "{", line)
+                Token(
+                    AbhibyaktiTokenType::LEFT_BRACE,
+                    "{",
+                    line
+                )
             );
 
             break;
 
+
         case '}':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_BRACE, "}", line)
+                Token(
+                    AbhibyaktiTokenType::RIGHT_BRACE,
+                    "}",
+                    line
+                )
             );
 
             break;
@@ -323,15 +547,24 @@ void Lexer::scanToken() {
         case '[':
 
             tokens.push_back(
-                Token(BhashaTokenType::LEFT_BRACKET, "[", line)
+                Token(
+                    AbhibyaktiTokenType::LEFT_BRACKET,
+                    "[",
+                    line
+                )
             );
 
             break;
 
+
         case ']':
 
             tokens.push_back(
-                Token(BhashaTokenType::RIGHT_BRACKET, "]", line)
+                Token(
+                    AbhibyaktiTokenType::RIGHT_BRACKET,
+                    "]",
+                    line
+                )
             );
 
             break;
@@ -341,15 +574,24 @@ void Lexer::scanToken() {
         case ';':
 
             tokens.push_back(
-                Token(BhashaTokenType::SEMICOLON, ";", line)
+                Token(
+                    AbhibyaktiTokenType::SEMICOLON,
+                    ";",
+                    line
+                )
             );
 
             break;
 
-        case ',':
+
+        case ',': 
 
             tokens.push_back(
-                Token(BhashaTokenType::COMMA, ",", line)
+                Token(
+                    AbhibyaktiTokenType::COMMA,
+                    ",",
+                    line
+                )
             );
 
             break;
@@ -374,8 +616,15 @@ void Lexer::scanToken() {
         // Numbers, identifiers and Bangla keywords
         default:
 
-            // Number
+            // ASCII number
             if (c >= '0' && c <= '9') {
+
+                current--;
+                number();
+            }
+
+            // Bangla number
+            else if (isBanglaDigitAt(current - 1)) {
 
                 current--;
                 number();
@@ -404,7 +653,7 @@ void Lexer::scanToken() {
 
                 tokens.push_back(
                     Token(
-                        BhashaTokenType::UNKNOWN,
+                        AbhibyaktiTokenType::UNKNOWN,
                         std::string(1, c),
                         line
                     )
@@ -414,3 +663,4 @@ void Lexer::scanToken() {
             break;
     }
 }
+

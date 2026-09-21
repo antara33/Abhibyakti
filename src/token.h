@@ -12,7 +12,7 @@
 #undef FALSE
 #endif
 
-enum class BhashaTokenType {
+enum class AbhibyaktiTokenType {
 
     // Data Types
     NUMBER_TYPE,
@@ -83,14 +83,14 @@ enum class BhashaTokenType {
 
 struct Token {
 
-    BhashaTokenType type;
+    AbhibyaktiTokenType type;
     std::string lexeme;
     int line;
 
-    Token(BhashaTokenType type, std::string lexeme, int line)
+    Token(AbhibyaktiTokenType type, std::string lexeme, int line)
         : type(type), lexeme(lexeme), line(line) {}
 };
 
-std::string tokenTypeToString(BhashaTokenType type);
+std::string tokenTypeToString(AbhibyaktiTokenType type);
 
 #endif

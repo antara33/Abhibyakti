@@ -15,18 +15,19 @@ class Parser
 private:
     std::vector<Token> tokens;
     size_t current;
+    bool hadError;
 
     // Basic token operations
     const Token &peek() const;
     const Token &previous() const;
     bool isAtEnd() const;
     const Token &advance();
-    bool check(BhashaTokenType type) const;
-    bool match(BhashaTokenType type);
+    bool check(AbhibyaktiTokenType type) const;
+    bool match(AbhibyaktiTokenType type);
 
     // Error handling
     const Token &consume(
-        BhashaTokenType type,
+        AbhibyaktiTokenType type,
         const std::string &message);
 
     void error(const std::string &message);
@@ -53,8 +54,8 @@ private:
     std::shared_ptr<Expression> parsePrimary();
 
     // Convert token type to AST data type
-    BhashaDataType tokenToDataType(
-        BhashaTokenType type) const;
+    AbhibyaktiDataType tokenToDataType(
+        AbhibyaktiTokenType type) const;
 
 public:
     explicit Parser(
@@ -62,6 +63,7 @@ public:
 
     // Start parsing and return the AST.
     std::shared_ptr<Program> parse();
+    bool hasError() const;
 };
 
 #endif // PARSER_H

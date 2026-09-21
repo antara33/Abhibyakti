@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     SetConsoleCP(CP_UTF8);
 
     std::cout << "========================================\n";
-    std::cout << "        BHASHA COMPILER\n";
+    std::cout << "        Abhibyakti COMPILER\n";
     std::cout << "========================================\n\n";
 
     std::string source;
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
 }
 )";
 
-        std::cout << "Using default Farmer's Crop Profit Calculator.\n\n";
+        std::cout << "Using  Farmer's Crop Profit Calculator.\n\n";
     }
 
     std::cout << "========== SOURCE CODE ==========\n\n";
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
         Parser parser(tokens);
         std::shared_ptr<Program> program = parser.parse();
 
-        if (!program)
+        if (!program || parser.hasError())
         {
             std::cout << "PARSER: FAILED\n";
             return 1;

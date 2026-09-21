@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run Bhasha Compiler",
+            "name": "Run Abhibyakti Compiler",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\main.exe",
@@ -18,7 +18,7 @@
             "externalConsole": true,
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
-            "preLaunchTask": "Build Bhasha Compiler"
+            "preLaunchTask": "Build Abhibyakti Compiler"
         }
     ]
 }

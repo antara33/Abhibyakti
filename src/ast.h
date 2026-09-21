@@ -6,10 +6,10 @@
 #include <vector>
 #include <utility>
 
-// BHASHA DATA TYPES
+// Abhibyakti DATA TYPES
 
 
-enum class BhashaDataType
+enum class AbhibyaktiDataType
 {
     NUMBER,
     DECIMAL,
@@ -59,11 +59,11 @@ class LiteralExpression : public Expression
 {
 public:
     std::string value;
-    BhashaDataType dataType;
+    AbhibyaktiDataType dataType;
 
     LiteralExpression(
         const std::string &value,
-        BhashaDataType dataType)
+        AbhibyaktiDataType dataType)
         : value(value),
           dataType(dataType) {}
 };
@@ -117,12 +117,12 @@ public:
 class DeclarationStatement : public Statement
 {
 public:
-    BhashaDataType dataType;
+    AbhibyaktiDataType dataType;
     std::string variableName;
     std::shared_ptr<Expression> initializer;
 
     DeclarationStatement(
-        BhashaDataType dataType,
+        AbhibyaktiDataType dataType,
         const std::string &variableName,
         std::shared_ptr<Expression> initializer)
         : dataType(dataType),

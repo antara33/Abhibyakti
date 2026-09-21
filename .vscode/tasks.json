@@ -3,7 +3,7 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build Bhasha Compiler",
+            "label": "Build Abhibyakti Compiler",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
                 "${workspaceFolder}\\main.cpp",

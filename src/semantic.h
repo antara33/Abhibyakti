@@ -13,7 +13,7 @@ class SemanticAnalyzer
 private:
     
 
-    std::unordered_map<std::string, BhashaDataType> symbolTable;
+    std::unordered_map<std::string, AbhibyaktiDataType> symbolTable;
 
 
 
@@ -21,7 +21,7 @@ private:
 
  
 
-    BhashaDataType analyzeExpression(
+    AbhibyaktiDataType analyzeExpression(
         const std::shared_ptr<Expression>& expression);
 
    
