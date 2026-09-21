@@ -7,7 +7,7 @@
 
 
 Parser::Parser(const std::vector<Token> &tokens)
-    : tokens(tokens), current(0)
+    : tokens(tokens), current(0), hadError(false)
 {
 }
 
@@ -77,6 +77,8 @@ const Token &Parser::consume(
 
 void Parser::error(const std::string &message)
 {
+    hadError = true;
+
     std::cerr
         << "Parser Error at line "
         << peek().line
@@ -712,4 +714,8 @@ AbhibyaktiDataType Parser::tokenToDataType(
     default:
         return AbhibyaktiDataType::UNKNOWN;
     }
+}
+bool Parser::hasError() const
+{
+    return hadError;
 }

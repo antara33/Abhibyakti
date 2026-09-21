@@ -15,6 +15,7 @@ class Parser
 private:
     std::vector<Token> tokens;
     size_t current;
+    bool hadError;
 
     // Basic token operations
     const Token &peek() const;
@@ -62,6 +63,7 @@ public:
 
     // Start parsing and return the AST.
     std::shared_ptr<Program> parse();
+    bool hasError() const;
 };
 
 #endif // PARSER_H

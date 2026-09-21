@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
         Parser parser(tokens);
         std::shared_ptr<Program> program = parser.parse();
 
-        if (!program)
+        if (!program || parser.hasError())
         {
             std::cout << "PARSER: FAILED\n";
             return 1;

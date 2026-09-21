@@ -481,11 +481,21 @@ AbhibyaktiDataType SemanticAnalyzer::analyzeExpression(
                 return AbhibyaktiDataType::UNKNOWN;
             }
 
-            // Division produces DECIMAL
-            if (op == "/")
+
+           // Division by zero check
+           if (op == "/" &&
+            isZeroLiteral(binary->right))
             {
-                return AbhibyaktiDataType::DECIMAL;
-            }
+                addError(
+                    "Division by zero.");
+                    return AbhibyaktiDataType::UNKNOWN;
+                }
+
+// Division produces DECIMAL
+if (op == "/")
+{
+    return AbhibyaktiDataType::DECIMAL;
+}
 
             // Decimal result
             if (leftType == AbhibyaktiDataType::DECIMAL ||
