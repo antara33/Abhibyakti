@@ -95,6 +95,8 @@ public:
         : left(std::move(left)),
           operatorSymbol(operatorSymbol),
           right(std::move(right)) {}
+
+          // Example: a + 5 * b
 };
 
 
